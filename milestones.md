@@ -22,6 +22,9 @@ https://drive.google.com/file/d/1YWEhSMiVv7tZsqzAGcj60thygVtAs7gp/view?usp=shari
 - My team and I were stuck on trying to figure out how to create an abstract layout of the server side, hence our goal to look into how networking works.  
 
 ### Ian:  
+- I wrote some initial boilerplate code, and looked into encryption in Python. The `ssl` standard library module is too high level for our use. It seems the module `cryptography` on PyPI is preferred for offering cryptography algorithms.
+- I think I'll try to look into use the `cryptography` module for end-to-end encryption. Perhaps using RSA, AES, and Diffie-Hellman key exchange.
+- It's difficult to figure out exactly how to create some initial class definitions and divide the program so we can work on things separately.
 
 ### Rohit:  
 - Last week I did some preliminary research on end to end encryption and read some papers / articles (Vuvuzela), wrote section of proposal.  
