@@ -1,5 +1,6 @@
 # Basic server implementation
-# Server expects messages in format $SourceID$DestID$Message
+# Server expects messages in format:
+# $SourceID[len 1]$DestID[len 1]$Mode[R or X]$Message
 
 """
 Todo:
@@ -8,9 +9,8 @@ Todo:
     - Selector uses single thread multitasking which is fine for this
 - Ensure the temp buffers and sending rounds work
 
-How server could work for our first test (could be slightly different. 
-it's set up differently for initial skeleton code. easy to change order):
-- Connect to source client, send any waiting data, accept any new data
+How server could work for our first test (could be different once multi-connection):
+- Connect to source client, send any waiting data, accept any new data 
 - Store new data in buffer, close.
 - Once dest client connects, send any data waiting for him, etc. Same process.
 """
@@ -32,7 +32,7 @@ def server():
 
     # Temporary buffers to store messages to 1 or 2.
     # This will be eventually unecessary with deadrops
-    to_usr1 = ["goodbye"]
+    to_usr1 = []
     to_usr2 = []
 
     while True:
@@ -42,26 +42,41 @@ def server():
             break # If we got nothing, then break
         data_str = str(data)
         print("Got data: " + data_str)
-        
-        # Check who the client is, store data, and set up any queued data to send
-        if data_str[0:2] == "$1":
-            to_usr2.append(data)
-            if to_usr1:
-                data = to_usr1.pop()
-            else:
-                break
-        elif data_str[0:2] == "$2":
-            to_usr1.append(data)
-            if to_usr2:
-                data = to_usr2.pop()
-            else:
-                break
-        else:
-            break
 
-        # Send the waiting data to client
-        print("[Server] Sending data to client")
-        conn.send(data.encode())
+        # Decode the header
+        source_client = data_str[1:2] # The "address" of source client
+        dest_client = data_str[3:4] #  The "address" of dest client
+        client_mode = data_str[5:6] # The mode in which client is (R, X)
+        # Note: R = read, X = read + write
+
+        print(source_client,dest_client,client_mode)
+
+        # Check for pending messages and send
+        data_send = " "
+        if source_client == "1" and to_usr1:
+            print("Checking 1's buffer")
+            data_send = to_usr1.pop()
+        elif source_client == "2" and to_usr2:
+            print("Checking 2's buffer")
+            data_send = to_usr2.pop()
+        
+        # Send data back to source client
+        print("[Server] Sending data: " + data_send)
+        conn.sendall(data_send.encode())
+
+        # If we are in read/write mode then store any sent data
+        if client_mode == "X":
+            print("We are in read/write mode")
+            if dest_client == "1":
+                to_usr1.append(data_str[7:])
+                print("Wrote to 1's buffer")
+            elif dest_client == "2":
+                to_usr2.append(data_str[7:])
+                print("Wrote to 2's buffer")
+            else:
+                print("Error, incorrect format.")
+                return
+
     # Close the connection
     conn.close()
 
