@@ -30,10 +30,12 @@ class ChatWindow(tk.Tk):
     def send_message(self):
         message = self.send_entry.get()
         self.send_entry.delete(0, len(message))
-        self.log.insert("end", "You> " + message + "\n", "you")
+        self.log.insert("end", "You> " , "you")
+        self.log.insert("end", message + "\n", None)
 
     def recv_message(self, sender, message):
-        self.log.insert("end", sender + "> " + message + "\n", "peer")
+        self.log.insert("end", sender + "> ", "peer")
+        self.log.insert("end", message + "\n")
 
 window = ChatWindow()
 window.mainloop()
