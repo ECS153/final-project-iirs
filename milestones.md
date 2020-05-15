@@ -33,6 +33,6 @@ https://drive.google.com/file/d/1YWEhSMiVv7tZsqzAGcj60thygVtAs7gp/view?usp=shari
 
 ### Spencer:  
 - Last week I worked on the initial proposal. And in preparation for that spent time researching how end to end encrypted chat apps worked. After we decided on an app similar to Vuvuzela, I spent time reading that paper and got a deeper understanding of how it works.  
-- This week I will start doing some initial programming. Additionally, we are all researching a few topics to get a deeper understanding of the code concepts that we will need to create an app like Vuvuzela.  
+- I created a simple client and hooked it up to the gui. I also connected the client to the server, so when you type in a message it sent back to the client. 
 - We are still figuring out exactly how we want to implement our app. After we do a bit of research we should be able to resolve this issue.   
 
