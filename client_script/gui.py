@@ -1,10 +1,12 @@
 import tkinter as tk
 from tkinter import ttk
+from .client import *
 from tkinter.scrolledtext import ScrolledText
 
 class ChatLogWidget(ttk.Frame):
-    def __init__(self, parent=None):
+    def __init__(self, parent, server_socket,):
         super().__init__(parent)
+        self.socket_server = server_socket
 
         self.log_text = tk.Text(self)
         #self.log_text['borderwidth'] = 0
@@ -26,8 +28,9 @@ class ChatLogWidget(ttk.Frame):
 
 
 class SendWidget(ttk.Frame):
-    def __init__(self, send_clbk, parent=None):
+    def __init__(self, send_clbk, parent, server_socket):
         super().__init__(parent)
+        self.socket_server = server_socket
 
         self.send_clbk = send_clbk
 
@@ -43,25 +46,28 @@ class SendWidget(ttk.Frame):
     def handle_send_evt(self, evt=None):
         message = self.send_entry.get()
         self.send_entry.delete(0, len(message))
+        response = send_Message_to_server(message, self.socket_server)
         self.send_clbk(message)
+        self.master.recv_message("Server", response)
 
 
 class ChatWindow(tk.Tk):
-    def __init__(self):
+    def __init__(self, server_socket):
         super().__init__()
         self.wm_title("Chat")
+        self.socket_server = server_socket
 
         style = ttk.Style()
         style.theme_use('clam')
 
-        self.log = ChatLogWidget(self)
+        self.log = ChatLogWidget(self, server_socket)
         self.log.pack(side="top", fill="both", expand=True)
 
-        self.send_frame = SendWidget(self.send_message, self)
+        self.send_frame = SendWidget(self.send_message, self, server_socket)
         self.send_frame.pack(side="bottom", fill="x")
 
-        self.recv_message("Someone", "test")
-        self.recv_message("Someone", "test2")
+        # self.recv_message("Someone", "test")
+        # self.recv_message("Someone", "test2")
 
     def send_message(self, message):
         self.log.append_message("You", "you", message)
@@ -70,5 +76,6 @@ class ChatWindow(tk.Tk):
         self.log.append_message(sender, "peer", message)
 
 
-window = ChatWindow()
-window.mainloop()
+# window = ChatWindow()
+# window.mainloop()
+

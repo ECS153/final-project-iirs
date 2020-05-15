@@ -1,18 +1,18 @@
-# Basic server implementation
+# Basic server_script implementation
 # Server expects messages in format:
 # $SourceID[len 1]$DestID[len 1]$Mode[R or X]$Message
 
 """
 Todo:
-- Convert server to accept multiple connections on multiple rounds
+- Convert server_script to accept multiple connections on multiple rounds
     - Non blocking, will use selectors, automatic connection management
     - Selector uses single thread multitasking which is fine for this
 - Ensure the temp buffers and sending rounds work
 
-How server could work for our first test (could be different once multi-connection):
-- Connect to source client, send any waiting data, accept any new data
+How server_script could work for our first test (could be different once multi-connection):
+- Connect to source client_script, send any waiting data, accept any new data
 - Store new data in buffer, close.
-- Once dest client connects, send any data waiting for him, etc. Same process.
+- Once dest client_script connects, send any data waiting for him, etc. Same process.
 """
 
 import socket, ssl
@@ -40,7 +40,7 @@ def server():
     to_usr2 = []
 
     while True:
-        # Get 4096 byes of data from client
+        # Get 4096 byes of data from client_script
         data = conn.recv(MSG_SIZE).decode()
         if not data:
             break # If we got nothing, then break
@@ -48,9 +48,9 @@ def server():
         print("Got data: " + data_str)
 
         # Decode the header
-        source_client = data_str[0:1] # The "address" of source client
-        dest_client = data_str[2:3] #  The "address" of dest client
-        client_mode = data_str[4:5] # The mode in which client is (R, X)
+        source_client = data_str[0:1] # The "address" of source client_script
+        dest_client = data_str[2:3] #  The "address" of dest client_script
+        client_mode = data_str[4:5] # The mode in which client_script is (R, X)
         # Note: R = read, X = read + write
 
         print(source_client,dest_client,client_mode)
@@ -64,7 +64,7 @@ def server():
             print("Checking 2's buffer")
             data_send = to_usr2.pop()
 
-        # Send data back to source client
+        # Send data back to source client_script
         print("[Server] Sending data: " + data_send)
         conn.sendall(data_send.encode())
 
@@ -106,9 +106,9 @@ def client_thread(client):
 
 def decode_data(data):
     # Decode the header
-    source_client = data[1:2] # The "address" of source client
-    dest_client = data[3:4] #  The "address" of dest client
-    client_mode = data[5:6] # The mode in which client is (R, X)
+    source_client = data[1:2] # The "address" of source client_script
+    dest_client = data[3:4] #  The "address" of dest client_script
+    client_mode = data[5:6] # The mode in which client_script is (R, X)
     # Note: R = read, X = read + write
     message = data[7:]
     return source_client, dest_client, client_mode, message
@@ -133,15 +133,15 @@ def server_test():
     conn, addr = main_socket.accept()
     print("[Server] Connected to " + str(addr))
     while True:
-        # Get 4096 byes of data from client
+        # Get 4096 byes of data from client_script
         data = conn.recv(MSG_SIZE).decode()
-        if not data:
-            break # If we got nothing, then break
+        # if not data:
+        #     break # If we got nothing, then break
         data_str = str(data)
         print("Got data: " + data_str)
 
 
-        # Send data back to source client
+        # Send data back to source client_script
         print("[Server] Sending data: " + data_str)
         conn.sendall(data_str.encode())
 
@@ -159,8 +159,8 @@ def setup_server():
     return main_socket
 
 if __name__ == "__main__":
-#    server = setup_server()
-#    connection_thread = Thread(target=accept_connection, args=(server,)).start()
+#    server_script = setup_server()
+#    connection_thread = Thread(target=accept_connection, args=(server_script,)).start()
 #    connection_thread.join()
-#    server.close()
+#    server_script.close()
     server_test()
