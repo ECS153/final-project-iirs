@@ -22,6 +22,7 @@ class ChatLogWidget(ttk.Frame):
     def append_message(self, sender, tag, message):
         self.log_text.insert("end", sender + "> ", tag)
         self.log_text.insert("end", message + "\n", None)
+        self.log_text.yview_moveto(1.)
 
 
 class SendWidget(ttk.Frame):
