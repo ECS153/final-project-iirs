@@ -48,9 +48,9 @@ def server():
         print("Got data: " + data_str)
 
         # Decode the header
-        source_client = data_str[1:2] # The "address" of source client
-        dest_client = data_str[3:4] #  The "address" of dest client
-        client_mode = data_str[5:6] # The mode in which client is (R, X)
+        source_client = data_str[0:1] # The "address" of source client
+        dest_client = data_str[2:3] #  The "address" of dest client
+        client_mode = data_str[4:5] # The mode in which client is (R, X)
         # Note: R = read, X = read + write
 
         print(source_client,dest_client,client_mode)
@@ -122,6 +122,32 @@ def send_message(data):
         if dest == addr:
             client.sendall(message.encode())
 
+
+def server_test():
+    # Create the socket instance and bind the host + port
+    main_socket = socket.socket()
+    main_socket.bind((HOST,PORT))
+
+    # Listen for connection and accept, printing the status
+    main_socket.listen()
+    conn, addr = main_socket.accept()
+    print("[Server] Connected to " + str(addr))
+    while True:
+        # Get 4096 byes of data from client
+        data = conn.recv(MSG_SIZE).decode()
+        if not data:
+            break # If we got nothing, then break
+        data_str = str(data)
+        print("Got data: " + data_str)
+
+
+        # Send data back to source client
+        print("[Server] Sending data: " + data_str)
+        conn.sendall(data_str.encode())
+
+    # Close the connection
+    conn.close()
+
 def setup_server():
     main_socket = socket.socket()
     main_socket.bind((HOST,PORT))
@@ -133,8 +159,8 @@ def setup_server():
     return main_socket
 
 if __name__ == "__main__":
-    server = setup_server()
-    connection_thread = Thread(target=accept_connection, args=(server,)).start()
-    connection_thread.join()
-
-    server.close()
+#    server = setup_server()
+#    connection_thread = Thread(target=accept_connection, args=(server,)).start()
+#    connection_thread.join()
+#    server.close()
+    server_test()
