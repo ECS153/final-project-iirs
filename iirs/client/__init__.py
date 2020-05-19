@@ -1,4 +1,5 @@
 import socket
+from getpass import getpass
 
 def connect_To_Server():
     HOST = socket.gethostname()  # For testing we will use same machine
@@ -13,3 +14,7 @@ def send_Message_to_server(message, server_socket):
     data = server_socket.recv(1024)
     decoded = data.decode("utf-8")
     return decoded
+
+def login():
+    username = input("Enter username:")
+    password = getpass(prompt="Enter password:")
