@@ -157,10 +157,3 @@ def setup_server():
     conn, addr = main_socket.accept()
     print("[Server] Connected to " + str(addr))
     return main_socket
-
-if __name__ == "__main__":
-#    server_script = setup_server()
-#    connection_thread = Thread(target=accept_connection, args=(server_script,)).start()
-#    connection_thread.join()
-#    server_script.close()
-    server_test()

@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
-from .client import *
 from tkinter.scrolledtext import ScrolledText
+
+from . import send_Message_to_server
 
 class ChatLogWidget(ttk.Frame):
     def __init__(self, parent, server_socket,):
