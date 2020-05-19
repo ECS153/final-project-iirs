@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
 
-from chat.server.main import main
+from iirs.server.main import main
 
 main()
