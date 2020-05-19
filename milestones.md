@@ -34,5 +34,26 @@ https://drive.google.com/file/d/1YWEhSMiVv7tZsqzAGcj60thygVtAs7gp/view?usp=shari
 ### Spencer:  
 - Last week I worked on the initial proposal. And in preparation for that spent time researching how end to end encrypted chat apps worked. After we decided on an app similar to Vuvuzela, I spent time reading that paper and got a deeper understanding of how it works.  
 - I created a simple client and hooked it up to the gui. I also connected the client to the server, so when you type in a message it sent back to the client. 
-- We are still figuring out exactly how we want to implement our app. After we do a bit of research we should be able to resolve this issue.   
+- We are still figuring out exactly how we want to implement our app. After we do a bit of research we should be able to resolve this issue.
 
+# Milestone 2 (5/19/2020)  
+
+## Update Video  
+[Link Goes Here]  
+
+## Meeting Notes  
+- Notes go here 
+
+## Team Progress  
+
+### Irvin:  
+- Notes go here  
+
+### Ian:  
+- Notes go here  
+
+### Rohit:  
+- Notes go here  
+
+### Spencer:  
+- Notes go here  
