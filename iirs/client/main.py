@@ -4,5 +4,9 @@ from .gui import ChatWindow
 def main():
     login()
     server_socket = connect_To_Server()
-    window = ChatWindow(server_socket)
-    window.mainloop()
+    while True:
+        if valid_user():
+            window = ChatWindow(server_socket)
+            window.mainloop()
+        else:
+            break

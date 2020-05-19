@@ -15,6 +15,11 @@ def send_Message_to_server(message, server_socket):
     decoded = data.decode("utf-8")
     return decoded
 
+# use usernmame and password to generate keys / do encryption
 def login():
     username = input("Enter username:")
     password = getpass(prompt="Enter password:")
+
+def valid_user():
+    dest = input("Enter username of user you want to talk to or q to quit:")
+    return dest != "q"

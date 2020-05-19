@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from tkinter.scrolledtext import ScrolledText
 
 from . import send_Message_to_server
@@ -53,9 +53,15 @@ class SendWidget(ttk.Frame):
 
 
 class ChatWindow(tk.Tk):
+    def on_closing(self):
+        if messagebox.askokcancel("Quit", "Do you want to quit?"):
+            # need to close sockets, do cleanup
+            self.destroy()
+
     def __init__(self, server_socket):
         super().__init__()
         self.wm_title("Chat")
+        self.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.socket_server = server_socket
 
         style = ttk.Style()
@@ -79,4 +85,3 @@ class ChatWindow(tk.Tk):
 
 # window = ChatWindow()
 # window.mainloop()
-
