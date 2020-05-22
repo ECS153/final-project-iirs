@@ -39,7 +39,7 @@ https://drive.google.com/file/d/1YWEhSMiVv7tZsqzAGcj60thygVtAs7gp/view?usp=shari
 # Milestone 2 (5/19/2020)  
 
 ## Update Video  
-[Link Goes Here]  
+https://drive.google.com/file/d/1Qx_vKBq2UNQMKSZaquJkDO7ALEG8ZWOv/view?usp=sharing  
 
 ## Meeting Notes  
 ### Discussion items
@@ -75,7 +75,7 @@ https://drive.google.com/file/d/1YWEhSMiVv7tZsqzAGcj60thygVtAs7gp/view?usp=shari
 - This week I am researching into threading, encrpytion, deadrops, and re-writing the entire server to accept multiple connections at the same time, allowing users to have a full fledged conversation.  
 - Not really stuck on anything.
 - Relevant Commits:  
-59f0271c602a0a478c2c468713065a10cc8181c4  (this week's progress)
+59f0271c602a0a478c2c468713065a10cc8181c4 (this week's progress)  
 cde3d59ed89094ae718dc1e838052dce4b1c8653  
 3556f77358c24a219f87018c4fb513223baa4572 (last week)  
 76a86432eaec130185ac0b9818f9436c9576f7fa  
@@ -96,13 +96,14 @@ b0ee4c18a64ab0b4a8e53dbd2b8559e13c437c36 (last week)
 
 ### Spencer:  
 - Last week I learned more about client server encryptions. I also created a very simple front end and connected that to the back end so we could send a message to the server and the server would send it right back. 
-
 - This week I researched mixing networks and I started to implement a basic one that fits the scope of the project.
-
 - I'm still trying to understand how the actual mixing is done in the mixing network. Specifically, if there are particular algorithms that need to be used to do this or if it can be fairly simple as long as it is random and reversible. 
 
 (this week)
 
+https://github.com/ECS153/final-project-iirs/commit/e56b7857ae8016c3f42bb9a360aa580f5db8c6cc
+
 (last week)
+
 https://github.com/ECS153/final-project-iirs/commit/31b5e7b276089ad2c13d6406183870f5aff2319f
 https://github.com/ECS153/final-project-iirs/commit/24295f9f1d6e2fbef1f28a23ed906dbf91658831
