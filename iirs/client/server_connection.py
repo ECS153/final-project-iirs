@@ -5,7 +5,7 @@ import queue
 
 from ..message import Message
 
-POLL_INTERVAL = .5
+SEND_INTERVAL = .5
 
 class ServerConnection:
     def __init__(self, host, port, username):
@@ -17,15 +17,11 @@ class ServerConnection:
         self.recv_thread = ReceiveThread(self)
         self.recv_thread.start()
 
-        self.poll_thread = PollThread(self)
-        self.poll_thread.start()
+        self.send_thread = SendThread(self)
+        self.send_thread.start()
 
     def send(self, message):
-        encoded = message.to_json().encode('utf-8') + b'\n'
-        self.sock.sendall(encoded)
-
-    def poll(self):
-        self.send(Message(self.username, None, None))
+        self.send_thread.queue.put(message)
 
     def recv(self):
         messages = []
@@ -37,19 +33,7 @@ class ServerConnection:
 
         return messages
 
-class PollThread(threading.Thread):
-    def __init__(self, connection):
-        super().__init__()
-        self.connection = connection
-
-    def run(self):
-        while True:
-            time.sleep(POLL_INTERVAL)
-            self.connection.poll()
-
-class ReceiveThread(threading.Thread):
-    recv_buffer = ''
-
+class SendThread(threading.Thread):
     def __init__(self, connection):
         super().__init__()
         self.connection = connection
@@ -57,9 +41,29 @@ class ReceiveThread(threading.Thread):
 
     def run(self):
         while True:
-            self.recv_buffer += self.connection.sock.recv(1024).decode('utf-8')
-            while '\n' in self.recv_buffer:
-                text, self.recv_buffer = self.recv_buffer.split('\n', 1)
+            time.sleep(SEND_INTERVAL)
+
+            try:
+                message = self.queue.get_nowait()
+            except queue.Empty:
+                message = Message(self.connection.username, None, None)
+
+            encoded = message.to_json().encode('utf-8') + b'\n'
+            self.connection.sock.sendall(encoded)
+
+class ReceiveThread(threading.Thread):
+
+    def __init__(self, connection):
+        super().__init__()
+        self.connection = connection
+        self.queue = queue.Queue()
+
+    def run(self):
+        recv_buffer = ''
+
+        while True:
+            recv_buffer += self.connection.sock.recv(1024).decode('utf-8')
+            while '\n' in recv_buffer:
+                text, recv_buffer = recv_buffer.split('\n', 1)
                 message = Message.from_json(text)
                 self.queue.put(message)
-
