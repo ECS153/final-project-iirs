@@ -1,4 +1,4 @@
-# Milestones 
+# Milestones
 ## IIRS Group  
 Irvin Leshchinsky, Ian Scott, Rohit Dhamankar, Spencer Grossarth
 
@@ -33,7 +33,7 @@ https://drive.google.com/file/d/1YWEhSMiVv7tZsqzAGcj60thygVtAs7gp/view?usp=shari
 
 ### Spencer:  
 - Last week I worked on the initial proposal. And in preparation for that spent time researching how end to end encrypted chat apps worked. After we decided on an app similar to Vuvuzela, I spent time reading that paper and got a deeper understanding of how it works.  
-- I created a simple client and hooked it up to the gui. I also connected the client to the server, so when you type in a message it sent back to the client. 
+- I created a simple client and hooked it up to the gui. I also connected the client to the server, so when you type in a message it sent back to the client.
 - We are still figuring out exactly how we want to implement our app. After we do a bit of research we should be able to resolve this issue.
 
 # Milestone 2 (5/19/2020)  
@@ -42,12 +42,12 @@ https://drive.google.com/file/d/1YWEhSMiVv7tZsqzAGcj60thygVtAs7gp/view?usp=shari
 [Link Goes Here]  
 
 ## Meeting Notes  
-- Notes go here 
+- Notes go here
 
 ## Team Progress  
 
 ### Irvin:  
-- Last week I learned about how python sockets work, how to implement handshakes, etc.; I also coded up a basic server that can accept a message from a client. 
+- Last week I learned about how python sockets work, how to implement handshakes, etc.; I also coded up a basic server that can accept a message from a client.
 - This week I am researching into threading, encrpytion, deadrops, and re-writing the entire server to accept multiple connections at the same time, allowing users to have a full fledged conversation.  
 - Not really stuck on anything.
 - Relevant Commits:  
@@ -59,7 +59,13 @@ cde3d59ed89094ae718dc1e838052dce4b1c8653 (this week's progress)
 - Notes go here  
 
 ### Rohit:  
-- Notes go here  
+- Last week I researched socket programming with python, key generation and encryption, and coded some threading functionality for the server.
+- This week I worked on client side code, specifically simple registration, login, and connecting to another user.
+- Wasn't really stuck on anything, still need to push code that integrates with server code and adds encryption.
+- Relevant Commits:
+  https://github.com/ECS153/final-project-iirs/commit/b0ee4c18a64ab0b4a8e53dbd2b8559e13c437c36 (last week)
+  https://github.com/ECS153/final-project-iirs/commit/a2d3e6fa6e916937e591fe857b8b1c14ffb678f0 (this week)
+  https://github.com/ECS153/final-project-iirs/commit/2a1457a33aa7ac9c93bf849667ad6867e61380af (this week)
 
 ### Spencer:  
 - Notes go here  
