@@ -50,9 +50,10 @@ https://drive.google.com/file/d/1YWEhSMiVv7tZsqzAGcj60thygVtAs7gp/view?usp=shari
 - Last week I learned about how python sockets work, how to implement handshakes, etc.; I also coded up a basic server that can accept a message from a client. 
 - This week I am researching into threading, encrpytion, deadrops, and re-writing the entire server to accept multiple connections at the same time, allowing users to have a full fledged conversation.  
 - Not really stuck on anything.
-cde3d59ed89094ae718dc1e838052dce4b1c8653 (this week's progress)
-3556f77358c24a219f87018c4fb513223baa4572 (last week)
-76a86432eaec130185ac0b9818f9436c9576f7fa (last week)
+- Relevant Commits:  
+cde3d59ed89094ae718dc1e838052dce4b1c8653 (this week's progress)  
+3556f77358c24a219f87018c4fb513223baa4572 (last week)  
+76a86432eaec130185ac0b9818f9436c9576f7fa (last week)  
 
 ### Ian:  
 - Notes go here  
