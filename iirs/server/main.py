@@ -65,7 +65,8 @@ class ConnectionThread(Thread):
             # Send messages 
             self.send_messages(data_send)
             # Store messages
-            self.store_message(message)
+            if message.dest != None:
+                self.store_message(message)
 
 def main():
     # Set up connection and client list

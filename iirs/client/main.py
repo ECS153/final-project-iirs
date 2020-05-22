@@ -10,7 +10,7 @@ PORT = 12345  # Arbitrary port for connecting
 
 def main():
     username, password = login()
-    server_connection = ServerConnection(HOST, PORT)
+    server_connection = ServerConnection(HOST, PORT, username)
     while True:
         dest = valid_user()
         if dest:
