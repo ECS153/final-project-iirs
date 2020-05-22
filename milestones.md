@@ -51,9 +51,10 @@ https://drive.google.com/file/d/1YWEhSMiVv7tZsqzAGcj60thygVtAs7gp/view?usp=shari
 - This week I am researching into threading, encrpytion, deadrops, and re-writing the entire server to accept multiple connections at the same time, allowing users to have a full fledged conversation.  
 - Not really stuck on anything.
 - Relevant Commits:  
-cde3d59ed89094ae718dc1e838052dce4b1c8653 (this week's progress)  
+59f0271c602a0a478c2c468713065a10cc8181c4  (this week's progress)
+cde3d59ed89094ae718dc1e838052dce4b1c8653  
 3556f77358c24a219f87018c4fb513223baa4572 (last week)  
-76a86432eaec130185ac0b9818f9436c9576f7fa (last week)  
+76a86432eaec130185ac0b9818f9436c9576f7fa  
 
 ### Ian:  
 - Notes go here  
@@ -62,10 +63,10 @@ cde3d59ed89094ae718dc1e838052dce4b1c8653 (this week's progress)
 - Last week I researched socket programming with python, key generation and encryption, and coded some threading functionality for the server.
 - This week I worked on client side code, specifically simple registration, login, and connecting to another user.
 - Wasn't really stuck on anything, still need to push code that integrates with server code and adds encryption.
-- Relevant Commits:
-  https://github.com/ECS153/final-project-iirs/commit/b0ee4c18a64ab0b4a8e53dbd2b8559e13c437c36 (last week)
-  https://github.com/ECS153/final-project-iirs/commit/a2d3e6fa6e916937e591fe857b8b1c14ffb678f0 (this week)
-  https://github.com/ECS153/final-project-iirs/commit/2a1457a33aa7ac9c93bf849667ad6867e61380af (this week)
+- Relevant Commits:  
+a2d3e6fa6e916937e591fe857b8b1c14ffb678f0 (this week's progress)  
+2a1457a33aa7ac9c93bf849667ad6867e61380af  
+b0ee4c18a64ab0b4a8e53dbd2b8559e13c437c36 (last week)  
 
 ### Spencer:  
 - Notes go here  
