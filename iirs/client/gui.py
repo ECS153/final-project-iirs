@@ -3,9 +3,8 @@ from tkinter import ttk, messagebox
 from tkinter.scrolledtext import ScrolledText
 
 class ChatLogWidget(ttk.Frame):
-    def __init__(self, parent, server_connection):
+    def __init__(self, parent):
         super().__init__(parent)
-        self.server_connection = server_connection
 
         self.log_text = tk.Text(self)
         #self.log_text['borderwidth'] = 0
@@ -27,9 +26,9 @@ class ChatLogWidget(ttk.Frame):
 
 
 class SendWidget(ttk.Frame):
-    def __init__(self, send_clbk, parent, server_connection):
+    def __init__(self, send_clbk, parent, chat_session):
         super().__init__(parent)
-        self.server_connection = server_connection
+        self.chat_session = chat_session
 
         self.send_clbk = send_clbk
 
@@ -45,9 +44,9 @@ class SendWidget(ttk.Frame):
     def handle_send_evt(self, evt=None):
         message = self.send_entry.get()
         self.send_entry.delete(0, len(message))
-        response = self.server_connection.send_message(message)
+        response = self.chat_session.send_message(message)
         self.send_clbk(message)
-        self.master.recv_message("Server", response)
+        self.master.recv_message(response.src, response.body)
 
 
 class ChatWindow(tk.Tk):
@@ -56,10 +55,10 @@ class ChatWindow(tk.Tk):
             # need to close sockets, do cleanup
             self.destroy()
 
-    def __init__(self, server_connection):
+    def __init__(self, chat_session):
         super().__init__()
 
-        self.server_connection = server_connection
+        self.chat_session = chat_session
 
         self.wm_title("Chat")
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -67,10 +66,10 @@ class ChatWindow(tk.Tk):
         style = ttk.Style()
         style.theme_use('clam')
 
-        self.log = ChatLogWidget(self, server_connection)
+        self.log = ChatLogWidget(self)
         self.log.pack(side="top", fill="both", expand=True)
 
-        self.send_frame = SendWidget(self.send_message, self, server_connection)
+        self.send_frame = SendWidget(self.send_message, self, chat_session)
         self.send_frame.pack(side="bottom", fill="x")
 
         # self.recv_message("Someone", "test")
