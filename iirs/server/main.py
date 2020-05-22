@@ -1,3 +1,8 @@
+# Basic multi-client server implementation
+# Server expects messages in format:
+# $SourceID[len 1]$DestID[len 1]$Mode[R or X]$Message
+
+
 import socket, ssl
 from threading import Thread
 from socketserver import ThreadingMixIn
