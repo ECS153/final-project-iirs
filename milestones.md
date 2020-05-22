@@ -81,7 +81,9 @@ cde3d59ed89094ae718dc1e838052dce4b1c8653
 76a86432eaec130185ac0b9818f9436c9576f7fa  
 
 ### Ian:  
-- Notes go here  
+- I implemented a basic GUI using `tkinter` (f263e7e07de0ec6a4c1d6ebecf04e3bee6610d67), reorganized the code to match python best practices (6669979ead0058bdac60b8ac1b6deb712b79df8d), and added a serializable message class for use in both the client and server (ff0438c5c32333614eb0d4fef16851b76e4cb993).
+- Next week I intend to take a look at the `cryptography` library from PyPI, and try to use the primitives there to implement an end-to-end encryption scheme to prevent the server from reading messages, and also verify sender identity.
+- Receiving messages asynchronously without blocking the UI has proven a bit awkward, but I think I've figured it out.
 
 ### Rohit:  
 - Last week I researched socket programming with python, key generation and encryption, and coded some threading functionality for the server.
