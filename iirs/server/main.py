@@ -36,9 +36,9 @@ class ConnectionThread(Thread):
     def get_messages(self, source_client):
         data_send = " "
         if source_client == "1" and to_usr1:
-            data_send = to_usr1.pop()
+            data_send = to_usr1.pop(0)
         elif source_client == "2" and to_usr2:
-            data_send = to_usr2.pop()
+            data_send = to_usr2.pop(0)
         return data_send
     
     def send_messages(self, msg):
