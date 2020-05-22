@@ -42,7 +42,31 @@ https://drive.google.com/file/d/1YWEhSMiVv7tZsqzAGcj60thygVtAs7gp/view?usp=shari
 [Link Goes Here]  
 
 ## Meeting Notes  
-- Notes go here
+### Discussion items
+- How to have two clients talk to one another?
+- Do clients know each others key beforehand or will there be a look up table?
+- Does a lookup table lead to security issues?
+- How to split up the work 4 different ways.
+
+### Design documents:
+- Mix net
+- Dead drop system/server
+- Client
+- Connection between client and server 
+
+
+### Breaking it up into 4 parts:
+- Client side - sending out messages each round that are fixed sizes (SSL to server)
+- Server side - handling the drop box and how it handled 
+- mixing net -  mixes the messages
+- connecting between servers - handling all of the security with how to connect from a client to a server 
+
+### Goals for this week:
+- Allow a couple of users to talk to each other, in a non secure way
+- Try and get rounds to work this week
+- Get initial implementation of a mixing net, connected to the back end
+
+
 
 ## Team Progress  
 
@@ -69,4 +93,14 @@ a2d3e6fa6e916937e591fe857b8b1c14ffb678f0 (this week's progress)
 b0ee4c18a64ab0b4a8e53dbd2b8559e13c437c36 (last week)  
 
 ### Spencer:  
-- Notes go here  
+- Last week I learned more about client server encryptions. I also created a very simple front end and connected that to the back end so we could send a message to the server and the server would send it right back. 
+
+- This week I researched mixing networks and I started to implement a basic one that fits the scope of the project.
+
+- I'm still trying to understand how the actual mixing is done in the mixing network. Specifically, if there are particular algorithms that need to be used to do this or if it can be fairly simple as long as it is random and reversible. 
+
+(this week)
+
+(last week)
+https://github.com/ECS153/final-project-iirs/commit/31b5e7b276089ad2c13d6406183870f5aff2319f
+https://github.com/ECS153/final-project-iirs/commit/24295f9f1d6e2fbef1f28a23ed906dbf91658831
