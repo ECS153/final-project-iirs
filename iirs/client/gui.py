@@ -26,9 +26,8 @@ class ChatLogWidget(ttk.Frame):
 
 
 class SendWidget(ttk.Frame):
-    def __init__(self, send_clbk, parent, chat_session):
+    def __init__(self, send_clbk, parent):
         super().__init__(parent)
-        self.chat_session = chat_session
 
         self.send_clbk = send_clbk
 
@@ -44,9 +43,7 @@ class SendWidget(ttk.Frame):
     def handle_send_evt(self, evt=None):
         message = self.send_entry.get()
         self.send_entry.delete(0, len(message))
-        response = self.chat_session.send_message(message)
         self.send_clbk(message)
-        self.master.recv_message(response.src, response.body)
 
 
 class ChatWindow(tk.Tk):
@@ -66,21 +63,25 @@ class ChatWindow(tk.Tk):
         style = ttk.Style()
         style.theme_use('clam')
 
+        self.after(1, self.fetch_messages)
+
         self.log = ChatLogWidget(self)
         self.log.pack(side="top", fill="both", expand=True)
 
-        self.send_frame = SendWidget(self.send_message, self, chat_session)
+        self.send_frame = SendWidget(self.send_message, self)
         self.send_frame.pack(side="bottom", fill="x")
 
-        # self.recv_message("Someone", "test")
-        # self.recv_message("Someone", "test2")
+    def fetch_messages(self):
+        self.after(1, self.fetch_messages)
+
+        # Check if any messages have been recieved
+        messages = self.chat_session.recv_messages()
+        for message in messages:
+            self.recv_message(message.src, message.body)
 
     def send_message(self, message):
+        self.chat_session.send_message(message)
         self.log.append_message("You", "you", message)
 
     def recv_message(self, sender, message):
         self.log.append_message(sender, "peer", message)
-
-
-# window = ChatWindow()
-# window.mainloop()

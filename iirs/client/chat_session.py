@@ -12,3 +12,6 @@ class ChatSession:
         message = Message(self.name, self.peer_name, body)
         return self.server_connection.send(message)
 
+    def recv_messages(self):
+        return self.server_connection.recv()
+
