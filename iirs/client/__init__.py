@@ -5,23 +5,25 @@ from getpass import getpass
 from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA512
 from Crypto.Cipher import AES
-from base64 import b64encode
+from base64 import b64encode, b64decode
 
 HOST = socket.gethostname()  # For testing we will use same machine
 PORT = 12345  # Arbitrary port for connecting
 
 def register_or_login():
-    while True:
+    loop = True
+    while loop:
         command = input("Enter r to register or l to login:")
         (username, password) = query_login()
         if command == "r":
             register_user(username, password)
             #generate_session_keys(username, password)
-            return (username, password)
+            break
         elif command == "l":
-            return login(username, password)
+            loop = login(username, password)
         else:
             print("invalid command, try again")
+    return (username, password)
 
 def register_user(username, password):
     encryption_key, server_password, remainder = hash_password(password)
@@ -43,6 +45,7 @@ def register(username, encryption_key, server_password, remainder):
     temp_session.send_message(public_key)
     temp_session.send_message(server_password)
     temp_session.send_message(b64encode(secure_private_key).decode())
+    temp_session.send_message(b64encode(tag).decode())
     # while True:
     #     continue
     # temp_server_connection.sock.shutdown(socket.SHUT_WR)
@@ -63,15 +66,22 @@ def login(username, password):
     temp_session = ChatSession(temp_server_connection, username, "login")
 
     temp_session.send_message(server_password)
-    messages = temp_session.recv_messages()
+    messages = []
+    #second receive should receive 3 messages
+    while len(messages) < 2:
+        messages += temp_session.recv_messages()
+
     if messages[0].body != "valid":
         print("invalid password, try again")
-        return
+        return True
+    else:
+        print("validated")
     public_key = messages[1].body
     secure_private_key = messages[2].body
+    tag = messages[3].body
     cipher = AES.new(encryption_key.encode(), AES.MODE_EAX, nonce=remainder.encode()) #AES-256 encryption
-    private_key = cipher.decrypt(secure_private_key)
-
+    private_key = cipher.decrypt_and_verify(b64decode(secure_private_key.encode()), b64decode(tag.encode()))
+    return False
     # temp_server_connection.sock.shutdown()
     # temp_server_connection.sock.close()
 
