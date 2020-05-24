@@ -79,7 +79,6 @@ class ConnectionThread(Thread):
                         client_info[temp_client_info[0]] = (temp_client_info[1], temp_client_info[2], temp_client_info[3], temp_client_info[4])
                         del temp_client_info[:]
                 elif message.dest == "login":
-                    print("here")
                     client = client_info[message.src]
                     password = client[1]
                     # validate user entered password
@@ -104,6 +103,12 @@ class ConnectionThread(Thread):
                         self.send_messages(messages)
                     else:
                         self.send_messages([ret_message])
+                elif message.dest == "validate":
+                    ret_body = client_info[message.body][0] if message.body in client_info else "invalid user"
+                    ret_src = "server"
+                    ret_dest = message.src
+                    ret_message = Message(ret_src, ret_dest, ret_body)
+                    self.send_messages([ret_message])
                 else:
                     self.store_message(message)
 

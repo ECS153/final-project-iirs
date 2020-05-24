@@ -91,9 +91,23 @@ def query_login():
     password = getpass(prompt="Enter password:")
     return (username, password)
 
-def valid_user():
+def valid_user(username):
     dest = input("Enter username of user you want to talk to or q to quit:")
     if dest == "q":
         return None
-    else:
-        return dest
+    temp_server_connection = ServerConnection(HOST, PORT, username)
+    temp_session = ChatSession(temp_server_connection, username, "validate")
+
+    temp_session.send_message(dest)
+    messages = []
+    #second receive should receive 3 messages
+    while len(messages) < 1:
+        messages += temp_session.recv_messages()
+
+    if messages[0].body == "invalid user":
+        print("This user does not exist, please try again")
+        return None
+
+    # other users public key, used for decrypting messages in end to end encryption
+    dest_public_key = messages[0].body
+    return dest
