@@ -16,16 +16,20 @@ MSG_SIZE = 4096 # Size of the message sent / received
 # Temporary buffers to store messages to users.
 # This will be eventually unecessary with deadrops
 message_queues = {}
+#store username, public key, encrypted password, encrypted key for clients
+client_info = {}
+#stores the client info until received all pieces
+temp_client_info = []
 
-class ConnectionThread(Thread): 
-    def __init__(self,host,port,conn): 
-        Thread.__init__(self) 
+class ConnectionThread(Thread):
+    def __init__(self,host,port,conn):
+        Thread.__init__(self)
         self.host = host
         self.port = port
         self.conn = conn
         self.hpstring = str(host) + ":" + str(port)
         print("[Server] Client connected at", self.hpstring)
-    
+
     def get_messages(self, source_client):
         try:
             messages = message_queues[source_client]
@@ -35,11 +39,11 @@ class ConnectionThread(Thread):
             return []
         except IndexError:
             return []
-    
+
     def send_messages(self, messages):
         text = ''.join(Message.to_json(i) + '\n' for i in messages)
         self.conn.sendall(text.encode())
-    
+
     def store_message(self, message):
         dest = message.dest
 
@@ -47,26 +51,34 @@ class ConnectionThread(Thread):
             message_queues[dest] = []
 
         message_queues[dest].append(message)
- 
-    def run(self): 
-        while True : 
+
+    def run(self):
+        while True:
             data = self.conn.recv(MSG_SIZE).decode()
             if not data:
                 print("[Server] Client " + self.hpstring + " has disconnected!", flush=True)
                 return
             data_str = str(data)
-            print ("[Server] Received data from" + self.hpstring + ": " + data_str)
+            #print ("[Server] Received data from " + self.hpstring + ": " + data_str)
 
             # Decode data
             message = Message.from_json(data_str)
-            # Check for messages 
+            # Check for messages
             data_send = self.get_messages(message.src)
-            print("[Server] Data sent to " + self.hpstring + " : " + str(data_send))
-            # Send messages 
+            #print("[Server] Data sent to " + self.hpstring + " : " + str(data_send))
+            # Send messages
             self.send_messages(data_send)
             # Store messages
             if message.dest != None:
-                self.store_message(message)
+                if message.dest == "register":
+                    temp_client_info.append(message.body)
+                    if len(temp_client_info) == 4:
+                        #username is key, value is (public key, password, private key)
+                        # TODO check if username taken already
+                        client_info[temp_client_info[0]] = (temp_client_info[1], temp_client_info[2], temp_client_info[3])
+                        del temp_client_info[:]
+                else:
+                    self.store_message(message)
 
 def main():
     # Set up connection and client list
@@ -75,7 +87,7 @@ def main():
     main_socket.bind((HOST,PORT))
     clients = []
     print("[Server] Server started at " + str(HOST) + ":" + str(PORT))
-    
+
     # Keep accepting connections from clients
     while True:
         main_socket.listen()

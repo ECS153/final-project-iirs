@@ -48,7 +48,7 @@ class SendWidget(ttk.Frame):
 
 class ChatWindow(tk.Tk):
     def on_closing(self):
-        if messagebox.askokcancel("Quit", "Do you want to quit?"):
+        if messagebox.askokcancel("Quit", "Do you want to terminate this chat?"):
             # need to close sockets, do cleanup
             self.destroy()
 
@@ -85,3 +85,38 @@ class ChatWindow(tk.Tk):
 
     def recv_message(self, sender, message):
         self.log.append_message(sender, "peer", message)
+
+
+"""GUI implementation of register and login TODO if time"""
+# class RegisterWidget(ttk.Frame):
+#     def __init__(self, register_clbk, parent):
+#         super().__init__(parent)
+#         self.register_clbk = register_clbk
+#         self.register_button = tk.Button(parent, text="Register", command=handle_register_event)
+#         self.register_button.pack(side="top", fill="both", expand=True)
+#
+#     def handle_register_event(self):
+#         pass
+#
+#
+# class LoginPage(tk.Tk):
+#
+#     def __init__(self):
+#         super().__init__()
+#
+#         self.wm_title("Home")
+#
+#         style = ttk.Style()
+#         style.theme_use('clam')
+#
+#         self.register = RegisterWidget(self.register_user, self)
+#         self.register.pack(side="top", fill="both", expand=True)
+#
+#         self.login = LoginWidget(self.login_user, self)
+#         self.login.pack(side="bottom", fill="x")
+#
+#     def register_user(self):
+#         pass
+#
+#     def login_user(self):
+#         pass

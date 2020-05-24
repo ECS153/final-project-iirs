@@ -9,7 +9,7 @@ HOST = socket.gethostname()  # For testing we will use same machine
 PORT = 12345  # Arbitrary port for connecting
 
 def main():
-    username, password = login()
+    username, password = register_or_login()
     server_connection = ServerConnection(HOST, PORT, username)
     while True:
         dest = valid_user()

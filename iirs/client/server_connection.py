@@ -47,7 +47,6 @@ class SendThread(threading.Thread):
                 message = self.queue.get_nowait()
             except queue.Empty:
                 message = Message(self.connection.username, None, None)
-
             encoded = message.to_json().encode('utf-8') + b'\n'
             self.connection.sock.sendall(encoded)
 
