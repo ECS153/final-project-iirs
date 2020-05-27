@@ -52,14 +52,14 @@ https://drive.google.com/file/d/1Qx_vKBq2UNQMKSZaquJkDO7ALEG8ZWOv/view?usp=shari
 - Mix net
 - Dead drop system/server
 - Client
-- Connection between client and server 
+- Connection between client and server
 
 
 ### Breaking it up into 4 parts:
 - Client side - sending out messages each round that are fixed sizes (SSL to server)
-- Server side - handling the drop box and how it handled 
+- Server side - handling the drop box and how it handled
 - mixing net -  mixes the messages
-- connecting between servers - handling all of the security with how to connect from a client to a server 
+- connecting between servers - handling all of the security with how to connect from a client to a server
 
 ### Goals for this week:
 - Allow a couple of users to talk to each other, in a non secure way
@@ -95,9 +95,9 @@ a2d3e6fa6e916937e591fe857b8b1c14ffb678f0 (this week's progress)
 b0ee4c18a64ab0b4a8e53dbd2b8559e13c437c36 (last week)  
 
 ### Spencer:  
-- Last week I learned more about client server encryptions. I also created a very simple front end and connected that to the back end so we could send a message to the server and the server would send it right back. 
+- Last week I learned more about client server encryptions. I also created a very simple front end and connected that to the back end so we could send a message to the server and the server would send it right back.
 - This week I researched mixing networks and I started to implement a basic one that fits the scope of the project.
-- I'm still trying to understand how the actual mixing is done in the mixing network. Specifically, if there are particular algorithms that need to be used to do this or if it can be fairly simple as long as it is random and reversible. 
+- I'm still trying to understand how the actual mixing is done in the mixing network. Specifically, if there are particular algorithms that need to be used to do this or if it can be fairly simple as long as it is random and reversible.
 
 (this week)
 
@@ -129,7 +129,13 @@ f7716d15582e906f1b04b8175c46ccde396570a3
 - Notes go here.  
 
 ### Rohit:  
-- Notes go here.  
+- Last week I worked on secure registration and login, as well as the key exchange system
+- This week I will do some modifications on the key exchange system to make it more secure, and integrate the security schemes with the end to end encryption system.
+- I am not stuck on anything
+- Relevant commits:
+b52736286c495125a3954ca9c8e4b29dfe143e00
+99e703a0bc22a10801d131fd8009721f20dd32d3
+52b681922783e72c78aa4dbd21c530ab764bcb66  
 
 ### Spencer:  
 - Notes go here.  
