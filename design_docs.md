@@ -6,3 +6,6 @@
 ## Server Side and Deaddrop System (Irvin)  
 - The process of accepting connections with multiple clients and holding secure conversations using deaddrops  
   - https://docs.google.com/document/d/1FfOIm0wYzkBHFOwA59q74hpDi7vSryTjMwZVdlMglNs/edit?usp=sharing  
+## Message encryption (Ian)
+- The format used for messages, and the end-to-end encryption and signature scheme
+  - https://docs.google.com/document/d/1MnH-UGarJqerV6VH8kIiuGgybsiAO2DP9RCpP5YnzMo

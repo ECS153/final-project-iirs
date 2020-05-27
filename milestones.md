@@ -121,7 +121,9 @@ https://github.com/ECS153/final-project-iirs/commit/24295f9f1d6e2fbef1f28a23ed90
 - Notes go here.  
 
 ### Ian:  
-- Notes go here.  
+- Since friday, I've researched encryption, and written a design document for the end-to-end encryption scheme we will use.
+- Later this week, I'll try to implement this using the `cryptography` package.
+- Figuring out how to design a good encryption protocol, even given implementations of the fundamental algorithms, is hard. But this should work. Probably.
 
 ### Rohit:  
 - Notes go here.  
