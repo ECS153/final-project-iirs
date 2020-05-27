@@ -111,7 +111,7 @@ https://github.com/ECS153/final-project-iirs/commit/24295f9f1d6e2fbef1f28a23ed90
 # Milestone 3 (5/26/2020)  
 
 ## Update Video  
-[Link Goes Here]
+https://drive.google.com/file/d/1NtVkOyXtnP_l_RAZ8haoR93QggTYofdO/view?usp=sharing
 
 ## Meeting Notes 
 ### Discussion notes:
