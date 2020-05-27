@@ -113,7 +113,34 @@ https://github.com/ECS153/final-project-iirs/commit/24295f9f1d6e2fbef1f28a23ed90
 ## Update Video  
 [Link Goes Here]
 
-## Meeting Notes  
+## Meeting Notes 
+### Discussion notes:
+- We need to integrate the server with the mixnet 
+- We might add password security on the client side (require complex password)
+- How do rounds work? How can we sync the client and the server?
+  - For now at the top of every second is the start of a round
+- two dead drop systems
+  - one for messages
+  - one for connections
+
+### Things still to do:
+- end to end encryption
+- integrate dead-drop with mixnet
+- client filters "empty" messages from real ones
+- clients decide at the same time where to send a message
+- client sends fix messages every round
+- server needs to store hashed content 
+
+### Security Issues
+- Private key is stored on the server (for convenience) but it is hashed, if the password is bad then maybe they can break it
+- Public keys are stored in plain
+- The server can tell how requested who's public key but they can't tell when or how often they talk to each other
+- We have everything will run local
+
+### Threat Model:
+- Clients are not adversaries 
+- Server can be compromised
+- We assume the mix net is not compromised
 
 ## Team Progress  
 
