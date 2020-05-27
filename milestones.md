@@ -125,17 +125,17 @@ https://drive.google.com/file/d/1NtVkOyXtnP_l_RAZ8haoR93QggTYofdO/view?usp=shari
 
 ### Things still to do:
 - end to end encryption
-- integrate dead-drop with mixnet
+- integrate dead-drop with mix net
 - client filters "empty" messages from real ones
 - clients decide at the same time where to send a message
-- client sends fix messages every round
+- client sends fixed messages every round
 - server needs to store hashed content 
 
 ### Security Issues
 - Private key is stored on the server (for convenience) but it is hashed, if the password is bad then maybe they can break it
-- Public keys are stored in plain
-- The server can tell how requested who's public key but they can't tell when or how often they talk to each other
-- We have everything will run local
+- Public keys are stored in plain text
+- The server can tell who requested who's public key but they can't tell when or how often they talk to each other
+- We have everything running locally
 
 ### Threat Model:
 - Clients are not adversaries 
@@ -167,4 +167,8 @@ b52736286c495125a3954ca9c8e4b29dfe143e00
 52b681922783e72c78aa4dbd21c530ab764bcb66  
 
 ### Spencer:  
-- Notes go here.  
+- Last week I set up the initial ideas behind the mixing net.
+- This week I wrote the design doc for the mixing net. I also updated the mixing net branch with the newest code form master. And added somemore to the interaction between the mixing net and the dead drop class.
+- How is it best to sync the client and the server so "rounds" are always in sync. 
+https://github.com/ECS153/final-project-iirs/commit/7d1b1c6e431db62e454d2361391bccd826fc9b9c
+https://github.com/ECS153/final-project-iirs/commit/42b5e972efa5478b01408e51657000cf67f6cc7c
