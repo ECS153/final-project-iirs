@@ -3,6 +3,7 @@ from .main import ConnectionThread, DeadDrop
 from threading import Thread
 import random
 import threading, time
+from .deaddrop import *
 
 
 class MixNetwork:
@@ -35,11 +36,10 @@ class MixNetwork:
             thread.join()
 
     def mix_and_pass(self):
-        if len(self.incoming_message_queue) > 2:
-            self.mixing()
-            self.outgoing_message_queue = self.deadDrop.handle_messages()
-            self.reverse_mix()
-        threading.Timer(2, self.mix_and_pass).start()
+        self.mixing()
+        self.outgoing_message_queue = self.deadDrop.handle_messages()
+        self.reverse_mix()
+        threading.Timer(1, self.mix_and_pass).start()
 
 
     def mixing(self):
@@ -61,6 +61,7 @@ class MixNetwork:
         reversed_swaps = self.swaps.reverse()
         for swap in reversed_swaps:
             self.outgoing_message_queue = self.swap_two_elements(swap[0], swap[1], self.outgoing_message_queue)
+            # send back out the messages
 
     def swap_two_elements(self, index_a, index_b, array):
         temp = array[index_a]

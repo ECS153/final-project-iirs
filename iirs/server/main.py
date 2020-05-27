@@ -9,6 +9,7 @@ from socketserver import ThreadingMixIn
 from .mix_network import MixNetwork
 
 from ..message import Message
+from .deaddrop import *
 
 HOST = socket.gethostname()  # For testing we will use same machine
 PORT = 12345  # Arbitrary port for connecting
@@ -17,6 +18,11 @@ MSG_SIZE = 4096  # Size of the message sent / received
 # Temporary buffers to store messages to users.
 # This will be eventually unecessary with deadrops
 message_queues = {}
+#store username, public key, encrypted password and tag, encrypted key for clients
+#persistent storage? currently resets when restarting server, need to re register
+client_info = {}
+#stores the client info until received all pieces
+temp_client_info = []
 
 
 class ConnectionThread(Thread):
@@ -58,31 +64,65 @@ class ConnectionThread(Thread):
                 print("[Server] Client " + self.hpstring + " has disconnected!", flush=True)
                 return
             data_str = str(data)
-            print("[Server] Received data from" + self.hpstring + ": " + data_str)
+            #print ("[Server] Received data from " + self.hpstring + ": " + data_str)
 
             # Decode data
             message = Message.from_json(data_str)
             # Check for messages
             data_send = self.get_messages(message.src)
-            print("[Server] Data sent to " + self.hpstring + " : " + str(data_send))
+            #print("[Server] Data sent to " + self.hpstring + " : " + str(data_send))
             # Send messages
             self.send_messages(data_send)
             # Store messages
             if message.dest != None:
-                self.store_message(message)
+                if message.dest == "register":
+                    temp_client_info.append(message.body)
+                    if len(temp_client_info) == 5:
+                        #username is key, value is (public key, password, private key, tag)
+                        # TODO check if username taken already
+                        client_info[temp_client_info[0]] = (temp_client_info[1], temp_client_info[2], temp_client_info[3], temp_client_info[4])
+                        del temp_client_info[:]
+                elif message.dest == "login":
+                    client = client_info[message.src]
+                    password = client[1]
+                    # validate user entered password
+                    ret_body = "valid" if message.body == password else "invalid"
+                    ret_src = "server"
+                    ret_dest = message.src
+
+                    ret_message = Message(ret_src, ret_dest, ret_body)
+                    self.send_messages([ret_message])
+
+                    #if valid password, send user info as well
+                    if ret_body == "valid":
+                        pub_key_message = Message(ret_src, ret_dest, client[0])
+                        #self.send_messages(pub_key_message)
+
+                        priv_key_message = Message(ret_src, ret_dest, client[2])
+                        #self.send_messages(priv_key_message)
+
+                        tag_message = Message(ret_src, ret_dest, client[3])
+                        #self.send_messages(tag_message)
+                        messages = [pub_key_message, priv_key_message, tag_message]
+                        self.send_messages(messages)
+                    else:
+                        self.send_messages([ret_message])
+                elif message.dest == "validate":
+                    ret_body = client_info[message.body][0] if message.body in client_info else "invalid user"
+                    ret_src = "server"
+                    ret_dest = message.src
+                    ret_message = Message(ret_src, ret_dest, ret_body)
+                    self.send_messages([ret_message])
+                else:
+                    self.store_message(message)
 
 
-class DeadDrop():
-    def __init__(self):
-        print("This class will handle all of the dead drops")
-
-    def handle_messages(self):
-        print("handle the messages, take in new and pass pass along old")
 
 
 
 def main():
-    mix_net = MixNetwork()
+    dead_drop = DeaddropManager()
+    mix_net = MixNetwork(dead_drop)
     mix_net.mix_and_pass()
     while True:
         mix_net.listen()

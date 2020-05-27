@@ -96,13 +96,40 @@ b0ee4c18a64ab0b4a8e53dbd2b8559e13c437c36 (last week)
 
 ### Spencer:  
 - Last week I learned more about client server encryptions. I also created a very simple front end and connected that to the back end so we could send a message to the server and the server would send it right back. 
-
 - This week I researched mixing networks and I started to implement a basic one that fits the scope of the project.
-
 - I'm still trying to understand how the actual mixing is done in the mixing network. Specifically, if there are particular algorithms that need to be used to do this or if it can be fairly simple as long as it is random and reversible. 
 
 (this week)
 
+https://github.com/ECS153/final-project-iirs/commit/e56b7857ae8016c3f42bb9a360aa580f5db8c6cc
+
 (last week)
+
 https://github.com/ECS153/final-project-iirs/commit/31b5e7b276089ad2c13d6406183870f5aff2319f
 https://github.com/ECS153/final-project-iirs/commit/24295f9f1d6e2fbef1f28a23ed906dbf91658831
+
+# Milestone 3 (5/26/2020)  
+
+## Update Video  
+[Link Goes Here]
+
+## Meeting Notes  
+
+## Team Progress  
+
+### Irvin:  
+- Last week I re-wrote the server side allowing for true multi-threaded connections and granting the ability for two clients to talk to each other; I also did research into how deaddrops work and socket encryption.
+- This week I am writing my design doc for the server and the deaddrop system, writing code for the deaddrop system (on both server and client side), and doing research and testing into simultaneous number generation and client syncing using internet based time (the code of which is mostly junk code that is for learning purposes before I start commiting).
+- I am not stuck on anything.  
+- Relevant commits:  
+f7716d15582e906f1b04b8175c46ccde396570a3  
+954051153d60075acb07c1cb78736219320b681c  
+
+### Ian:  
+- Notes go here.  
+
+### Rohit:  
+- Notes go here.  
+
+### Spencer:  
+- Notes go here.  
