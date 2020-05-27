@@ -118,7 +118,12 @@ https://github.com/ECS153/final-project-iirs/commit/24295f9f1d6e2fbef1f28a23ed90
 ## Team Progress  
 
 ### Irvin:  
-- Notes go here.  
+- Last week I re-wrote the server side allowing for true multi-threaded connections and granting the ability for two clients to talk to each other; I also did research into how deaddrops work and socket encryption.
+- This week I am writing my design doc for the server and the deaddrop system, writing code for the deaddrop system (on both server and client side), and doing research and testing into simultaneous number generation and client syncing using internet based time (the code of which is mostly junk code that is for learning purposes before I start commiting).
+- I am not stuck on anything.  
+- Relevant commits:  
+f7716d15582e906f1b04b8175c46ccde396570a3  
+954051153d60075acb07c1cb78736219320b681c  
 
 ### Ian:  
 - Notes go here.  
