@@ -107,3 +107,24 @@ https://github.com/ECS153/final-project-iirs/commit/e56b7857ae8016c3f42bb9a360aa
 
 https://github.com/ECS153/final-project-iirs/commit/31b5e7b276089ad2c13d6406183870f5aff2319f
 https://github.com/ECS153/final-project-iirs/commit/24295f9f1d6e2fbef1f28a23ed906dbf91658831
+
+# Milestone 3 (5/26/2020)  
+
+## Update Video  
+[Link Goes Here]
+
+## Meeting Notes  
+
+## Team Progress  
+
+### Irvin:  
+- Notes go here.  
+
+### Ian:  
+- Notes go here.  
+
+### Rohit:  
+- Notes go here.  
+
+### Spencer:  
+- Notes go here.  
