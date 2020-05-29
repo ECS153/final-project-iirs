@@ -3,8 +3,8 @@ from .server_connection import ServerConnection
 from .chat_session import ChatSession
 from getpass import getpass
 from Crypto.PublicKey import RSA
-from Crypto.Hash import SHA512
 from Crypto.Cipher import AES
+import hashlib
 from base64 import b64encode, b64decode
 
 HOST = socket.gethostname()  # For testing we will use same machine
@@ -52,11 +52,12 @@ def register(username, encryption_key, server_password, remainder):
     # temp_server_connection.sock.close()
 
 def hash_password(password):
-    h = SHA512.new()
+    h = hashlib.sha512()
     h.update(str.encode(password)) #convert string password to bytes, hash
-    encryption_key = h.hexdigest()[:32] #use first 32 bytes as key
-    remainder = h.hexdigest()[32:48] #use next 16 bytes to hold password on server
-    server_password = h.hexdigest()[48:] #remainder, used as iv for encryption
+    digest = h.hexdigest()
+    encryption_key = digest[:32] #use first 32 bytes as key
+    remainder = digest[32:48] #use next 16 bytes to hold password on server
+    server_password = digest[48:] #remainder, used as iv for encryption
     return encryption_key, server_password, remainder
 
 # use usernmame and password to generate keys / do encryption
