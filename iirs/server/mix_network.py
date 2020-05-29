@@ -4,6 +4,8 @@ from threading import Thread
 import random
 import threading, time
 from .deaddrop import *
+from ..message import *
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 
 class MixNetwork:
@@ -18,10 +20,19 @@ class MixNetwork:
         self.main_socket.bind((self.HOST, self.PORT))
 
 
-        self.incoming_message_queue = []
-        self.outgoing_message_queue = []
+        self.incoming_message_queue = {}
+        self.outgoing_message_queue = {}
+        self.shuffled_messages = []
+        self.src_arr = []
         self.clients = []
         self.swaps = []
+
+        # this idea is correct, IDK if the syntax is correct
+        # https://apscheduler.readthedocs.io/en/stable/userguide.html#
+        sched = BlockingScheduler()
+        # job is a cron style job, running every second
+        sched.add_job(self.mix_and_pass(), 'cron', second='*')
+        sched.start()
 
         print("[Server] Server started at " + str(self.HOST) + ":" + str(self.PORT))
 
@@ -29,45 +40,63 @@ class MixNetwork:
         # Keep accepting connections from clients
         self.main_socket.listen()
         conn, (host, port) = self.main_socket.accept()
-        connection_thread = ConnectionThread(host, port, conn, self.incoming_message_queue)
+        connection_thread = ConnectionThread(host, port, conn, self.incoming_message_queue, self.outgoing_message_queue)
         connection_thread.start()
         self.clients.append(connection_thread)
         for thread in self.clients:
             thread.join()
 
     def mix_and_pass(self):
-        self.mixing()
-        self.outgoing_message_queue = self.deadDrop.handle_messages()
-        self.reverse_mix()
-        threading.Timer(1, self.mix_and_pass).start()
+        swaps = []
+        src_arr = []
+        shuffled_messages = []
+        swaps, src_arr, shuffled_messages = self.mixing(swaps, src_arr, shuffled_messages)
+        response_shuffled = self.deadDrop.handle_messages(shuffled_messages)
+        self.reverse_mix(response_shuffled, swaps, src_arr)
+        for connection in self.clients:
+            connection.get_messages()
 
 
-    def mixing(self):
+
+    def mixing(self, swaps, src_arr, shuffled_messages):
         # we will be generating the key each round
         key = random.randint(1, 1000)
         random.seed(key)
         randomNum = random.randint(1, 1000)
-        self.swaps = []
+        index = 0
+        for key in self.incoming_message_queue.keys():
+            src_arr[index] = key
+            # should only be one message each round
+            old_message = self.incoming_message_queue[key][0]
+            new_message = Message(None, old_message.body, old_message.dest)
+            shuffled_messages.append(new_message)
+            index += 1
 
         # Fisher–Yates shuffle
-        for i in range(len(self.incoming_message_queue) - 1, 0, -1):
+        for i in range(len(shuffled_messages) - 1, 0, -1):
             if i == 0:
                 break
             j = randomNum % i
-            self.incoming_message_queue = self.swap_two_elements(i, j, self.incoming_message_queue)
-            self.swaps.append((i, j))
+            shuffled_messages = self.swap_two_elements(i, j, shuffled_messages)
+            swaps.append((i, j))
+        return swaps, src_arr, shuffled_messages
 
-    def reverse_mix(self):
-        reversed_swaps = self.swaps.reverse()
+    def reverse_mix(self, response_shuffled, swaps, src_arr):
+        reversed_swaps = swaps.reverse()
         for swap in reversed_swaps:
-            self.outgoing_message_queue = self.swap_two_elements(swap[0], swap[1], self.outgoing_message_queue)
-            # send back out the messages
+            response_shuffled = self.swap_two_elements(swap[0], swap[1], response_shuffled)
+        i = 0
+        for message in response_shuffled:
+           self.outgoing_message_queue[src_arr[i]] = Message(None, message, src_arr[i])
 
     def swap_two_elements(self, index_a, index_b, array):
         temp = array[index_a]
         array[index_a] = array[index_b]
         array[index_b] = temp
         return array
+
+
+
 
 
 

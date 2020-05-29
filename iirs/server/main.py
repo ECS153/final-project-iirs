@@ -26,20 +26,21 @@ temp_client_info = []
 
 
 class ConnectionThread(Thread):
-    def __init__(self, host, port, conn, message_queue):
+    def __init__(self, host, port, conn, incoming_queue, outgoing_queue):
         Thread.__init__(self)
         self.host = host
         self.port = port
         self.conn = conn
         self.hpstring = str(host) + ":" + str(port)
-        self.message_queue = message_queue
+        self.incoming_queue = incoming_queue
+        self.outgoing_queue = outgoing_queue
         print("[Server] Client connected at", self.hpstring)
 
-    def get_messages(self, source_client):
+    def get_messages(self):
         try:
-            messages = message_queues[source_client]
-            del message_queues[source_client]
-            return messages
+            messages = self.outgoing_queue[self.username]
+            del self.outgoing_queue[self.username]
+            self.send_messages(messages)
         except KeyError:
             return []
         except IndexError:
@@ -50,12 +51,12 @@ class ConnectionThread(Thread):
         self.conn.sendall(text.encode())
 
     def store_message(self, message):
-        dest = message.dest
+        src = message.src
 
-        if dest not in message_queues:
-            message_queues[dest] = []
+        if src not in self.incoming_queue:
+            self.incoming_queue[src] = []
 
-        message_queues[dest].append(message)
+        self.incoming_queue[src].append(message)
 
     def run(self):
         while True:
@@ -65,14 +66,10 @@ class ConnectionThread(Thread):
                 return
             data_str = str(data)
             #print ("[Server] Received data from " + self.hpstring + ": " + data_str)
-
             # Decode data
             message = Message.from_json(data_str)
-            # Check for messages
-            data_send = self.get_messages(message.src)
+            self.username = message.src
             #print("[Server] Data sent to " + self.hpstring + " : " + str(data_send))
-            # Send messages
-            self.send_messages(data_send)
             # Store messages
             if message.dest != None:
                 if message.dest == "register":
@@ -123,6 +120,5 @@ class ConnectionThread(Thread):
 def main():
     dead_drop = DeaddropManager()
     mix_net = MixNetwork(dead_drop)
-    mix_net.mix_and_pass()
     while True:
         mix_net.listen()
