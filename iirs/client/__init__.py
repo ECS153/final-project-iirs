@@ -1,5 +1,4 @@
 import socket
-from base64 import b64encode, b64decode
 from getpass import getpass
 import hashlib
 
@@ -39,16 +38,16 @@ def register(username, encryption_key, server_password, remainder):
     temp_session = ChatSession(temp_server_connection, username, "register")
 
     key = rsa.generate_private_key(65537, 2048, default_backend()) #2048 bit key
-    public_key = key.public_key().public_bytes(Encoding.PEM, PublicFormat.PKCS1)
+    public_key = key.public_key().public_bytes(Encoding.PEM, PublicFormat.PKCS1).decode()
     secure_private_key = key.private_bytes(Encoding.PEM,
             PrivateFormat.PKCS8,
-            BestAvailableEncryption(remainder.encode()))
+            BestAvailableEncryption(remainder.encode())).decode()
 
     #send username, server_password, public_key, and secure_private_key to server
     temp_session.send_message(username)
     temp_session.send_message(public_key)
     temp_session.send_message(server_password)
-    temp_session.send_message(b64encode(secure_private_key).decode())
+    temp_session.send_message(secure_private_key)
     # while True:
     #     continue
     # temp_server_connection.sock.shutdown(socket.SHUT_WR)
