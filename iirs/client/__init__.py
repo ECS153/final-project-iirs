@@ -41,7 +41,7 @@ def register(username, encryption_key, server_password, remainder):
     public_key = key.public_key().public_bytes(Encoding.PEM, PublicFormat.PKCS1).decode()
     secure_private_key = key.private_bytes(Encoding.PEM,
             PrivateFormat.PKCS8,
-            BestAvailableEncryption(remainder.encode())).decode()
+            BestAvailableEncryption(encryption_key.encode())).decode()
 
     #send username, server_password, public_key, and secure_private_key to server
     temp_session.send_message(username)
@@ -71,7 +71,7 @@ def login(username, password):
     temp_session.send_message(server_password)
     messages = []
     #second receive should receive 3 messages
-    while len(messages) < 2:
+    while len(messages) < 3:
         messages += temp_session.recv_messages()
 
     if messages[0].body != "valid":
@@ -81,7 +81,7 @@ def login(username, password):
         print("validated")
     public_key = messages[1].body
     secure_private_key = messages[2].body
-    private_key = load_pem_private_key(encryption_key.encode(), remainder.encode(), default_backend())
+    private_key = load_pem_private_key(secure_private_key.encode(), encryption_key.encode(), default_backend())
     return False
     # temp_server_connection.sock.shutdown()
     # temp_server_connection.sock.close()
