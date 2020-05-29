@@ -2,7 +2,7 @@ import socket
 from getpass import getpass
 import hashlib
 
-from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, PublicFormat, BestAvailableEncryption, load_pem_private_key
 
@@ -37,8 +37,8 @@ def register(username, encryption_key, server_password, remainder):
     temp_server_connection = ServerConnection(HOST, PORT, username)
     temp_session = ChatSession(temp_server_connection, username, "register")
 
-    key = rsa.generate_private_key(65537, 2048, default_backend()) #2048 bit key
-    public_key = key.public_key().public_bytes(Encoding.PEM, PublicFormat.PKCS1).decode()
+    key = ec.generate_private_key(ec.SECP256R1, default_backend()) #256 bit key
+    public_key = key.public_key().public_bytes(Encoding.PEM, PublicFormat.SubjectPublicKeyInfo).decode()
     secure_private_key = key.private_bytes(Encoding.PEM,
             PrivateFormat.PKCS8,
             BestAvailableEncryption(encryption_key.encode())).decode()
