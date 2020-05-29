@@ -1,11 +1,15 @@
 import socket
+from base64 import b64encode, b64decode
+from getpass import getpass
+import hashlib
+
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, PublicFormat, BestAvailableEncryption, load_pem_private_key
+
 from .server_connection import ServerConnection
 from .chat_session import ChatSession
-from getpass import getpass
-from Crypto.PublicKey import RSA
-from Crypto.Cipher import AES
-import hashlib
-from base64 import b64encode, b64decode
+
 
 HOST = socket.gethostname()  # For testing we will use same machine
 PORT = 12345  # Arbitrary port for connecting
@@ -34,18 +38,17 @@ def register(username, encryption_key, server_password, remainder):
     temp_server_connection = ServerConnection(HOST, PORT, username)
     temp_session = ChatSession(temp_server_connection, username, "register")
 
-    key = RSA.generate(2048) #2048 bit key
-    public_key = key.publickey().exportKey().decode()
-    private_key = key.exportKey()
-    cipher = AES.new(encryption_key.encode(), AES.MODE_EAX, nonce=remainder.encode()) #AES-256 encryption
-    secure_private_key, tag = cipher.encrypt_and_digest(private_key)
+    key = rsa.generate_private_key(65537, 2048, default_backend()) #2048 bit key
+    public_key = key.public_key().public_bytes(Encoding.PEM, PublicFormat.PKCS1)
+    secure_private_key = key.private_bytes(Encoding.PEM,
+            PrivateFormat.PKCS8,
+            BestAvailableEncryption(remainder.encode()))
 
     #send username, server_password, public_key, and secure_private_key to server
     temp_session.send_message(username)
     temp_session.send_message(public_key)
     temp_session.send_message(server_password)
     temp_session.send_message(b64encode(secure_private_key).decode())
-    temp_session.send_message(b64encode(tag).decode())
     # while True:
     #     continue
     # temp_server_connection.sock.shutdown(socket.SHUT_WR)
@@ -79,9 +82,7 @@ def login(username, password):
         print("validated")
     public_key = messages[1].body
     secure_private_key = messages[2].body
-    tag = messages[3].body
-    cipher = AES.new(encryption_key.encode(), AES.MODE_EAX, nonce=remainder.encode()) #AES-256 encryption
-    private_key = cipher.decrypt_and_verify(b64decode(secure_private_key.encode()), b64decode(tag.encode()))
+    private_key = load_pem_private_key(encryption_key.encode(), remainder.encode(), default_backend())
     return False
     # temp_server_connection.sock.shutdown()
     # temp_server_connection.sock.close()
