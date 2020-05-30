@@ -1,11 +1,11 @@
 import socket, ssl
-from .main import ConnectionThread, DeadDrop
+from .connectionThread import *
 from threading import Thread
 import random
 import threading, time
 from .deaddrop import *
 from ..message import *
-from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 
 
 class MixNetwork:
@@ -29,32 +29,37 @@ class MixNetwork:
 
         # this idea is correct, IDK if the syntax is correct
         # https://apscheduler.readthedocs.io/en/stable/userguide.html#
-        sched = BlockingScheduler()
+        sched = BackgroundScheduler()
         # job is a cron style job, running every second
-        sched.add_job(self.mix_and_pass(), 'cron', second='*')
-        sched.start()
+        sched.add_job(self.mix_and_pass, 'cron', second='*')
+      #  sched.start()
 
         print("[Server] Server started at " + str(self.HOST) + ":" + str(self.PORT))
 
     def listen(self):
         # Keep accepting connections from clients
+        print("listen")
         self.main_socket.listen()
         conn, (host, port) = self.main_socket.accept()
         connection_thread = ConnectionThread(host, port, conn, self.incoming_message_queue, self.outgoing_message_queue)
         connection_thread.start()
+        print("started thread")
         self.clients.append(connection_thread)
         for thread in self.clients:
             thread.join()
+        print("end of listen method")
 
     def mix_and_pass(self):
         swaps = []
         src_arr = []
         shuffled_messages = []
-        swaps, src_arr, shuffled_messages = self.mixing(swaps, src_arr, shuffled_messages)
-        response_shuffled = self.deadDrop.handle_messages(shuffled_messages)
-        self.reverse_mix(response_shuffled, swaps, src_arr)
-        for connection in self.clients:
-            connection.get_messages()
+        print("mix_and_pass")
+        if len(self.incoming_message_queue.keys()) > 0:
+            swaps, src_arr, shuffled_messages = self.mixing(swaps, src_arr, shuffled_messages)
+            response_shuffled = self.deadDrop.handle_messages(shuffled_messages)
+            self.reverse_mix(response_shuffled, swaps, src_arr)
+            for connection in self.clients:
+                connection.get_messages()
 
 
 
