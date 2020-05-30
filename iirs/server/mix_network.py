@@ -32,7 +32,7 @@ class MixNetwork:
         sched = BackgroundScheduler()
         # job is a cron style job, running every second
         sched.add_job(self.mix_and_pass, 'cron', second='*')
-      #  sched.start()
+        sched.start()
 
         print("[Server] Server started at " + str(self.HOST) + ":" + str(self.PORT))
 
@@ -45,16 +45,14 @@ class MixNetwork:
         connection_thread.start()
         print("started thread")
         self.clients.append(connection_thread)
-        for thread in self.clients:
-            thread.join()
-        print("end of listen method")
+
 
     def mix_and_pass(self):
         swaps = []
         src_arr = []
         shuffled_messages = []
         print("mix_and_pass")
-        if len(self.incoming_message_queue.keys()) > 0:
+        if len(self.incoming_message_queue.keys()) > 1:
             swaps, src_arr, shuffled_messages = self.mixing(swaps, src_arr, shuffled_messages)
             response_shuffled = self.deadDrop.handle_messages(shuffled_messages)
             self.reverse_mix(response_shuffled, swaps, src_arr)
@@ -68,14 +66,13 @@ class MixNetwork:
         key = random.randint(1, 1000)
         random.seed(key)
         randomNum = random.randint(1, 1000)
-        index = 0
         for key in self.incoming_message_queue.keys():
-            src_arr[index] = key
+            src_arr.append(key)
+            #src_arr[index] = key
             # should only be one message each round
             old_message = self.incoming_message_queue[key][0]
-            new_message = Message(None, old_message.body, old_message.dest)
+            new_message = Message(None, old_message.dest, old_message.body)
             shuffled_messages.append(new_message)
-            index += 1
 
         # Fisher–Yates shuffle
         for i in range(len(shuffled_messages) - 1, 0, -1):
