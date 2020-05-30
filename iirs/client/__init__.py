@@ -53,6 +53,8 @@ def register(username, encryption_key, server_password, remainder):
     # temp_server_connection.sock.shutdown(socket.SHUT_WR)
     # temp_server_connection.sock.close()
 
+    temp_server_connection.close()
+
 def hash_password(password):
     h = hashlib.sha512()
     h.update(str.encode(password)) #convert string password to bytes, hash
@@ -82,6 +84,7 @@ def login(username, password):
     public_key = messages[1].body
     secure_private_key = messages[2].body
     private_key = load_pem_private_key(secure_private_key.encode(), encryption_key.encode(), default_backend())
+    temp_server_connection.close()
     return False
     # temp_server_connection.sock.shutdown()
     # temp_server_connection.sock.close()
