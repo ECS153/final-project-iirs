@@ -71,7 +71,8 @@ class MixNetwork:
             #src_arr[index] = key
             # should only be one message each round
             old_message = self.incoming_message_queue[key][0]
-            new_message = Message(None, old_message.dest, old_message.body)
+            #new_message = Message(None, old_message.dest, old_message.body)
+            new_message = Message(None, '1', old_message.body) # this is temporary
             shuffled_messages.append(new_message)
 
         # Fisher–Yates shuffle
@@ -84,12 +85,12 @@ class MixNetwork:
         return swaps, src_arr, shuffled_messages
 
     def reverse_mix(self, response_shuffled, swaps, src_arr):
-        reversed_swaps = swaps.reverse()
-        for swap in reversed_swaps:
+        swaps.reverse()
+        for swap in swaps:
             response_shuffled = self.swap_two_elements(swap[0], swap[1], response_shuffled)
         i = 0
         for message in response_shuffled:
-           self.outgoing_message_queue[src_arr[i]] = Message(None, message, src_arr[i])
+           self.outgoing_message_queue[src_arr[i]] = Message(None, src_arr[i], message)
 
     def swap_two_elements(self, index_a, index_b, array):
         temp = array[index_a]

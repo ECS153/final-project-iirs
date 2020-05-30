@@ -33,7 +33,7 @@ class ConnectionThread(Thread):
 
     def get_messages(self):
         try:
-            messages = self.outgoing_queue[self.username]
+            messages = self.outgoing_queue[self.username].body
             del self.outgoing_queue[self.username]
             self.send_messages(messages)
         except KeyError:
