@@ -3,9 +3,18 @@
 # $SourceID[len 1]$DestID[len 1]$Mode[R or X]$Message
 
 
-import socket, ssl
+import socket
+import ssl
+from tempfile import NamedTemporaryFile
 from threading import Thread
 from socketserver import ThreadingMixIn
+import datetime
+
+from cryptography import x509
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption
 
 from ..message import Message
 
@@ -118,10 +127,19 @@ def main():
     clients = []
     print("[Server] Server started at " + str(HOST) + ":" + str(PORT))
 
+    key = rsa.generate_private_key(65537, 2048, default_backend())
+    certificate = x509.CertificateBuilder(x509.Name([]), x509.Name([]), key.public_key(), x509.random_serial_number(), datetime.datetime.utcnow(), datetime.datetime.utcnow() + datetime.timedelta(days=7)).sign(key, hashes.SHA256(), default_backend())
+    with NamedTemporaryFile() as certfile, NamedTemporaryFile() as keyfile:
+        keyfile.write(key.private_bytes(Encoding.PEM, PrivateFormat.TraditionalOpenSSL, NoEncryption()))
+        certfile.write(certificate.public_bytes(Encoding.PEM))
+        keyfile.flush()
+        certfile.flush()
+        main_socket_ssl = ssl.wrap_socket(main_socket, server_side=True, certfile=certfile.name, keyfile=keyfile.name)
+
     # Keep accepting connections from clients
     while True:
-        main_socket.listen()
-        conn, (host, port) = main_socket.accept()
+        main_socket_ssl.listen()
+        conn, (host, port) = main_socket_ssl.accept()
         connection_thread = ConnectionThread(host,port,conn)
         connection_thread.start()
         clients.append(connection_thread)

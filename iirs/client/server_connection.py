@@ -1,4 +1,5 @@
 import socket
+import ssl
 import threading
 import time
 import queue
@@ -11,8 +12,9 @@ class ServerConnection:
     closed = False
 
     def __init__(self, host, port, username):
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.connect((host, port))
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((host, port))
+        self.sock = ssl.wrap_socket(sock)
 
         self.username = username
 
