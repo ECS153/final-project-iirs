@@ -78,6 +78,7 @@ def login(username, password):
 
     if messages[0].body != "valid":
         print("invalid password, try again")
+        temp_server_connection.close()
         return True
     else:
         print("validated")
@@ -95,12 +96,11 @@ def query_login():
     password = getpass(prompt="Enter password:")
     return (username, password)
 
-def valid_user(username):
+def valid_user(server_connection, username):
     dest = input("Enter username of user you want to talk to or q to quit:")
     if dest == "q":
         return None
-    temp_server_connection = ServerConnection(HOST, PORT, username)
-    temp_session = ChatSession(temp_server_connection, username, "validate")
+    temp_session = ChatSession(server_connection, username, "validate")
 
     temp_session.send_message(dest)
     messages = []

@@ -12,7 +12,7 @@ def main():
     username, password = register_or_login()
     server_connection = ServerConnection(HOST, PORT, username)
     while True:
-        dest = valid_user(username)
+        dest = valid_user(server_connection, username)
         if dest:
             session = ChatSession(server_connection, username, dest)
             window = ChatWindow(session)
