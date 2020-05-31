@@ -19,6 +19,15 @@ class MixNetwork:
         self.main_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.main_socket.bind((self.HOST, self.PORT))
 
+        key = rsa.generate_private_key(65537, 2048, default_backend())
+        certificate = x509.CertificateBuilder(x509.Name([]), x509.Name([]), key.public_key(), x509.random_serial_number(), datetime.datetime.utcnow(), datetime.datetime.utcnow() + datetime.timedelta(days=7)).sign(key, hashes.SHA256(), default_backend())
+        with NamedTemporaryFile() as certfile, NamedTemporaryFile() as keyfile:
+            keyfile.write(key.private_bytes(Encoding.PEM, PrivateFormat.TraditionalOpenSSL, NoEncryption()))
+            certfile.write(certificate.public_bytes(Encoding.PEM))
+            keyfile.flush()
+            certfile.flush()
+            self.main_socket_ssl = ssl.wrap_socket(self.main_socket, server_side=True, certfile=certfile.name, keyfile=keyfile.name)
+
 
         self.incoming_message_queue = {}
         self.outgoing_message_queue = {}
@@ -27,8 +36,6 @@ class MixNetwork:
         self.clients = []
         self.swaps = []
 
-        # this idea is correct, IDK if the syntax is correct
-        # https://apscheduler.readthedocs.io/en/stable/userguide.html#
         sched = BackgroundScheduler()
         # job is a cron style job, running every second
         sched.add_job(self.mix_and_pass, 'cron', second='*')
@@ -37,13 +44,10 @@ class MixNetwork:
         print("[Server] Server started at " + str(self.HOST) + ":" + str(self.PORT))
 
     def listen(self):
-        # Keep accepting connections from clients
-        print("listen")
-        self.main_socket.listen()
-        conn, (host, port) = self.main_socket.accept()
+        self.main_socket_ssl.listen()
+        conn, (host, port) = self.main_socket_ssl.accept()
         connection_thread = ConnectionThread(host, port, conn, self.incoming_message_queue, self.outgoing_message_queue)
         connection_thread.start()
-        print("started thread")
         self.clients.append(connection_thread)
 
 

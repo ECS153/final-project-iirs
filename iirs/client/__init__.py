@@ -1,11 +1,14 @@
 import socket
+from getpass import getpass
+import hashlib
+
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, PublicFormat, BestAvailableEncryption, load_pem_private_key
+
 from .server_connection import ServerConnection
 from .chat_session import ChatSession
-from getpass import getpass
-from Crypto.PublicKey import RSA
-from Crypto.Hash import SHA512
-from Crypto.Cipher import AES
-from base64 import b64encode, b64decode
+
 
 HOST = socket.gethostname()  # For testing we will use same machine
 PORT = 12345  # Arbitrary port for connecting
@@ -34,29 +37,31 @@ def register(username, encryption_key, server_password, remainder):
     temp_server_connection = ServerConnection(HOST, PORT, username)
     temp_session = ChatSession(temp_server_connection, username, "register")
 
-    key = RSA.generate(2048) #2048 bit key
-    public_key = key.publickey().exportKey().decode()
-    private_key = key.exportKey()
-    cipher = AES.new(encryption_key.encode(), AES.MODE_EAX, nonce=remainder.encode()) #AES-256 encryption
-    secure_private_key, tag = cipher.encrypt_and_digest(private_key)
+    key = ec.generate_private_key(ec.SECP256R1, default_backend()) #256 bit key
+    public_key = key.public_key().public_bytes(Encoding.PEM, PublicFormat.SubjectPublicKeyInfo).decode()
+    secure_private_key = key.private_bytes(Encoding.PEM,
+            PrivateFormat.PKCS8,
+            BestAvailableEncryption(encryption_key.encode())).decode()
 
     #send username, server_password, public_key, and secure_private_key to server
     temp_session.send_message(username)
     temp_session.send_message(public_key)
     temp_session.send_message(server_password)
-    temp_session.send_message(b64encode(secure_private_key).decode())
-    temp_session.send_message(b64encode(tag).decode())
+    temp_session.send_message(secure_private_key)
     # while True:
     #     continue
     # temp_server_connection.sock.shutdown(socket.SHUT_WR)
     # temp_server_connection.sock.close()
 
+    temp_server_connection.close()
+
 def hash_password(password):
-    h = SHA512.new()
+    h = hashlib.sha512()
     h.update(str.encode(password)) #convert string password to bytes, hash
-    encryption_key = h.hexdigest()[:32] #use first 32 bytes as key
-    remainder = h.hexdigest()[32:48] #use next 16 bytes to hold password on server
-    server_password = h.hexdigest()[48:] #remainder, used as iv for encryption
+    digest = h.hexdigest()
+    encryption_key = digest[:32] #use first 32 bytes as key
+    remainder = digest[32:48] #use next 16 bytes to hold password on server
+    server_password = digest[48:] #remainder, used as iv for encryption
     return encryption_key, server_password, remainder
 
 # use usernmame and password to generate keys / do encryption
@@ -68,19 +73,19 @@ def login(username, password):
     temp_session.send_message(server_password)
     messages = []
     #second receive should receive 3 messages
-    while len(messages) < 2:
+    while len(messages) < 3:
         messages += temp_session.recv_messages()
 
     if messages[0].body != "valid":
         print("invalid password, try again")
+        temp_server_connection.close()
         return True
     else:
         print("validated")
     public_key = messages[1].body
     secure_private_key = messages[2].body
-    tag = messages[3].body
-    cipher = AES.new(encryption_key.encode(), AES.MODE_EAX, nonce=remainder.encode()) #AES-256 encryption
-    private_key = cipher.decrypt_and_verify(b64decode(secure_private_key.encode()), b64decode(tag.encode()))
+    private_key = load_pem_private_key(secure_private_key.encode(), encryption_key.encode(), default_backend())
+    temp_server_connection.close()
     return False
     # temp_server_connection.sock.shutdown()
     # temp_server_connection.sock.close()
@@ -91,12 +96,11 @@ def query_login():
     password = getpass(prompt="Enter password:")
     return (username, password)
 
-def valid_user(username):
+def valid_user(server_connection, username):
     dest = input("Enter username of user you want to talk to or q to quit:")
     if dest == "q":
         return None
-    temp_server_connection = ServerConnection(HOST, PORT, username)
-    temp_session = ChatSession(temp_server_connection, username, "validate")
+    temp_session = ChatSession(server_connection, username, "validate")
 
     temp_session.send_message(dest)
     messages = []

@@ -1,6 +1,16 @@
 from ..message import Message
 import socket
+import ssl
+from tempfile import NamedTemporaryFile
 from threading import Thread
+from socketserver import ThreadingMixIn
+import datetime
+
+from cryptography import x509
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption 
 
 # Basic multi-client server implementation
 # Server expects messages in format:
@@ -69,10 +79,10 @@ class ConnectionThread(Thread):
             if message.dest != None:
                 if message.dest == "register":
                     temp_client_info.append(message.body)
-                    if len(temp_client_info) == 5:
-                        #username is key, value is (public key, password, private key, tag)
+                    if len(temp_client_info) == 4:
+                        #username is key, value is (public key, password, private key)
                         # TODO check if username taken already
-                        client_info[temp_client_info[0]] = (temp_client_info[1], temp_client_info[2], temp_client_info[3], temp_client_info[4])
+                        client_info[temp_client_info[0]] = (temp_client_info[1], temp_client_info[2], temp_client_info[3])
                         del temp_client_info[:]
                 elif message.dest == "login":
                     client = client_info[message.src]
@@ -93,9 +103,7 @@ class ConnectionThread(Thread):
                         priv_key_message = Message(ret_src, ret_dest, client[2])
                         #self.send_messages(priv_key_message)
 
-                        tag_message = Message(ret_src, ret_dest, client[3])
-                        #self.send_messages(tag_message)
-                        messages = [pub_key_message, priv_key_message, tag_message]
+                        messages = [pub_key_message, priv_key_message]
                         self.send_messages(messages)
                     else:
                         self.send_messages([ret_message])
