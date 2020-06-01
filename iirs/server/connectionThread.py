@@ -39,12 +39,25 @@ class ConnectionThread(Thread):
         self.hpstring = str(host) + ":" + str(port)
         self.incoming_queue = incoming_queue
         self.outgoing_queue = outgoing_queue
+        self.srcstr = ""
         print("[Server] Client connected at", self.hpstring)
 
     def get_messages(self):
+        # [TEMP] Fix for deleting incoming queue so that messages don't loop through network
+        del self.incoming_queue[self.srcstr]
         try:
+            print("cT attempting to get messages for",self.username) # Debug 'This prints which username we are trying to get messages for'
             messages = self.outgoing_queue[self.username].body
+            print("cT: Attempting to send messages") # Debug
+            print("cT: Message queue contents (len: " + str(len(messages)) +")") # Debug 'This prints the num of messages stored'
+            # Debug Start_Block
+            # 'Prints the contents of each Message object'
+            for i in messages:
+                print("{Source: " + str(i.src) + " | Dest: " + str(i.dest) + " | Msg: " + str(i.body) + "}")
+            # Debug End_Block
+            print("Outgoing queue before delete",self.outgoing_queue) # Debug 'Shows contents of outgoing_queue before deletion'
             del self.outgoing_queue[self.username]
+            print("Outgoing queue after delete",self.outgoing_queue) # Debug 'Shows contents of outgoing_queue after deletion'
             self.send_messages(messages)
         except KeyError:
             return []
@@ -55,8 +68,12 @@ class ConnectionThread(Thread):
         text = ''.join(Message.to_json(i) + '\n' for i in messages)
         self.conn.sendall(text.encode())
 
+
     def store_message(self, message):
         src = message.src
+        # [TEMP] Part of incoming queue deletion on line 46.
+        if self.srcstr == "":
+            self.srcstr = src
 
         if src not in self.incoming_queue:
             self.incoming_queue[src] = []
@@ -75,8 +92,9 @@ class ConnectionThread(Thread):
             message = Message.from_json(data_str)
             self.username = message.src
             #print("[Server] Data sent to " + self.hpstring + " : " + str(data_send))
+            
             # Store messages
-            if message.dest != None:
+            if message.dest != None: #[TEMP] Note if you want mix net to recieve empty messages then just write (if True:)
                 if message.dest == "register":
                     temp_client_info.append(message.body)
                     if len(temp_client_info) == 4:

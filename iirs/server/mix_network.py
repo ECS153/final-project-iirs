@@ -56,12 +56,22 @@ class MixNetwork:
         src_arr = []
         shuffled_messages = []
         print("mix_and_pass")
+        # Delete all dead threads
+        # This basically goes through the clients list and make sure all dead threads are deleted
+        for connection in self.clients:
+            if not connection.isAlive():
+                print("MixNPAss: Deleting dead thread") # Debug 'Prints when Dead thread is deleted'
+                self.clients.remove(connection)
+                connection.join()
         if len(self.incoming_message_queue.keys()) > 1:
             swaps, src_arr, shuffled_messages = self.mixing(swaps, src_arr, shuffled_messages)
             response_shuffled = self.deadDrop.handle_messages(shuffled_messages)
             self.reverse_mix(response_shuffled, swaps, src_arr)
             for connection in self.clients:
-                connection.get_messages()
+                if connection.isAlive():
+                    print("MixNPass: trying to send for conn:",connection) # Debug 'Prints when mixnet is trying to send for a thread'
+                    connection.get_messages()
+
 
 
 

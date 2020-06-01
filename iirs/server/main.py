@@ -9,3 +9,5 @@ def main():
     while True:
         print("in while true loop")
         mix_net.listen()
+    for thread in mix_net.clients:
+        thread.join()
