@@ -19,7 +19,7 @@ def register_or_login():
         command = input("Enter r to register or l to login:")
         (username, password) = query_login()
         if command == "r":
-            register_user(username, password)
+            private_key = register_user(username, password)
             #generate_session_keys(username, password)
             break
         elif command == "l":
@@ -30,7 +30,7 @@ def register_or_login():
 
 def register_user(username, password):
     encryption_key, server_password, remainder = hash_password(password)
-    register(username, encryption_key, server_password, remainder)
+    return register(username, encryption_key, server_password, remainder)
 
 
 def register(username, encryption_key, server_password, remainder):
@@ -96,7 +96,7 @@ def query_login():
 def valid_user(server_connection, username):
     dest = input("Enter username of user you want to talk to or q to quit:")
     if dest == "q":
-        return None
+        return None, None
     temp_session = ChatSession(server_connection, username, None, "validate", None)
 
     temp_session.send_message(dest)
@@ -107,7 +107,7 @@ def valid_user(server_connection, username):
 
     if messages[0].body == "invalid user":
         print("This user does not exist, please try again")
-        return None
+        return None, None
 
     # other users public key, used for decrypting messages in end to end encryption
     dest_public_key = load_pem_public_key(messages[0].body.encode(), default_backend())

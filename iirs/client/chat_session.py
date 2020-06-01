@@ -22,7 +22,7 @@ class ChatSession:
         if self.aes_key is not None:
             peer_message = PeerMessage(body)
             encrypted = peer_message.to_encrypted_bytes(self.ec_key, self.aes_key)
-            body = b64encode(encrypted)
+            body = b64encode(encrypted).decode()
 
         message = Message(self.name, self.peer_name, body)
         return self.server_connection.send(message)

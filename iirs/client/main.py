@@ -14,6 +14,7 @@ def main():
     while True:
         dest, dest_public_key = valid_user(server_connection, username)
         if dest:
+            print(private_key, dest_public_key)
             session = ChatSession(server_connection, username, private_key, dest, dest_public_key)
             window = ChatWindow(session)
             window.mainloop()

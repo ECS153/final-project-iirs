@@ -7,6 +7,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.ciphers import Cipher
 from cryptography.hazmat.primitives.ciphers.modes import CBC
+from cryptography.hazmat.primitives import hashes
 
 def datetime_from_ms(ms):
     dt = datetime.datetime.fromtimestamp(ms // 1000)
@@ -21,7 +22,7 @@ def datetime_from_ms(ms):
 
 
 def datetime_to_ms(dt):
-    return 1000 * dt.timestamp() + dt.microsecond // 1000
+    return int(1000 * dt.timestamp())
 
 
 class PeerMessage:
@@ -41,11 +42,12 @@ class PeerMessage:
         except cryptography.exceptions.InvalidSignature:
             return None
 
-        send_time = struct.unpack('<q', b[72:79] + b'\0')
+        send_time = struct.unpack('<q', b[72:79] + b'\0')[0]
         send_time = datetime_from_ms(send_time)
 
         message_length = min(b[79], 160)
-        message = b[80:80+message_length-1]
+        message = b[80:80+message_length]
+        message = message.decode()
 
         return PeerMessage(message, send_time)
 
@@ -59,17 +61,17 @@ class PeerMessage:
         decrypted = decryptor.update(b[16:])
         decrypted += decryptor.finalize()
 
-        return _from_bytes(decrypted)
+        return cls._from_bytes(decrypted, peer_ec_key)
 
     def _to_bytes(self, ec_key):
         assert len(self.message) <= 160
 
         send_time = datetime_to_ms(self.send_time)
-        send_time = struct.pack('<q')[:7]
+        send_time = struct.pack('<q', send_time)[:7]
 
         message_length = bytes([len(self.message)])
 
-        message = self.message.ljust(160, b'\0')
+        message = self.message.encode().ljust(160, b'\0')
 
         b = send_time + message_length + message
 
@@ -82,7 +84,7 @@ class PeerMessage:
         encryptor = Cipher(aes_key, CBC(iv), default_backend()).encryptor()
 
         b_encrypted = iv
-        b_encrypted += encryptor.update(_to_bytes())
+        b_encrypted += encryptor.update(self._to_bytes(ec_key))
         b_encrypted += encryptor.finalize()
 
         return b_encrypted
