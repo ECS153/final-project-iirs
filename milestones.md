@@ -172,3 +172,6 @@ b52736286c495125a3954ca9c8e4b29dfe143e00
 - How is it best to sync the client and the server so "rounds" are always in sync. 
 https://github.com/ECS153/final-project-iirs/commit/7d1b1c6e431db62e454d2361391bccd826fc9b9c
 https://github.com/ECS153/final-project-iirs/commit/42b5e972efa5478b01408e51657000cf67f6cc7c
+
+## Final Presentation
+https://drive.google.com/file/d/16GMeXmCCHvflay9mQrDg_GpvqSng8WQO/view?usp=sharing
