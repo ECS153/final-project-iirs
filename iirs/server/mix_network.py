@@ -105,6 +105,7 @@ class MixNetwork:
         i = 0
         for message in response_shuffled:
            self.outgoing_message_queue[src_arr[i]] = Message(None, src_arr[i], message)
+           i += 1
 
     def swap_two_elements(self, index_a, index_b, array):
         temp = array[index_a]
