@@ -20,6 +20,7 @@ class ChatLogWidget(ttk.Frame):
         self.log_scroll.pack(side="right", fill="y")
 
     def append_message(self, sender, tag, message):
+        #Temp
         self.log_text.insert("end", sender + "> ", tag)
         self.log_text.insert("end", message + "\n", None)
         self.log_text.yview_moveto(1.)
@@ -85,7 +86,8 @@ class ChatWindow(tk.Tk):
         self.log.append_message("You", "you", message)
 
     def recv_message(self, sender, message):
-        self.log.append_message(sender, "peer", message)
+        # [TEMP] Self.chat_session.sender temp solution
+        self.log.append_message(self.chat_session.peer_name, "peer", message)
 
 
 """GUI implementation of register and login TODO if time"""

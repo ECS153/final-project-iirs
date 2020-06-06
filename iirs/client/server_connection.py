@@ -92,6 +92,7 @@ class ReceiveThread(threading.Thread):
 
         while not self.terminated:
             recv_buffer += self.connection.sock.recv(1024).decode('utf-8')
+            print("[Client] Recieved message:", recv_buffer) # Debug 'Prints what client has recieved'
             while '\n' in recv_buffer:
                 text, recv_buffer = recv_buffer.split('\n', 1)
                 message = Message.from_json(text)
