@@ -8,6 +8,7 @@ from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.ciphers import Cipher
 from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives import hashes
+from cryptography.exceptions import InvalidSignature
 
 def datetime_from_ms(ms):
     dt = datetime.datetime.fromtimestamp(ms // 1000)
@@ -39,7 +40,8 @@ class PeerMessage:
 
         try:
             peer_ec_key.verify(signature, b[72:], ec.ECDSA(hashes.SHA256()))
-        except cryptography.exceptions.InvalidSignature:
+        except InvalidSignature:
+            print("Invalid signature: skipping")
             return None
 
         send_time = struct.unpack('<q', b[72:79] + b'\0')[0]
