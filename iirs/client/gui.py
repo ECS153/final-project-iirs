@@ -77,7 +77,8 @@ class ChatWindow(tk.Tk):
         # Check if any messages have been recieved
         messages = self.chat_session.recv_messages()
         for message in messages:
-            self.recv_message(message.src, message.body)
+            peer_message = message.body
+            self.recv_message(message.src, peer_message.message)
 
     def send_message(self, message):
         self.chat_session.send_message(message)
