@@ -58,7 +58,8 @@ class DeaddropManager:
         # Set up 'num' deaddrops and automatic garbage collection
         self.dd = {}
         self.num = num
-        for i in range(1,num + 1):
+        # Deaddrop 0 is the connection deaddrop 
+        for i in range(0,num + 1):
             self.dd[str(i)] = DeadDrop()
         
         # [BETA 1] Start garbage collection (Implemented and working but not turning this on until needed)

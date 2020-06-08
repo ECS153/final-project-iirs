@@ -93,11 +93,13 @@ def query_login():
     password = getpass(prompt="Enter password:")
     return (username, password)
 
-def valid_user(server_connection, username):
+def valid_user(username):
+    temp_server_connection = ServerConnection(HOST, PORT, username)
     dest = input("Enter username of user you want to talk to or q to quit:")
-    if dest == "q":
+    if dest == "q": # Todo: This doesn't quit properly?
+        temp_server_connection.close()
         return None, None
-    temp_session = ChatSession(server_connection, username, None, "validate", None)
+    temp_session = ChatSession(temp_server_connection, username, None, "validate", None)
 
     temp_session.send_message(dest)
     messages = []
@@ -107,8 +109,10 @@ def valid_user(server_connection, username):
 
     if messages[0].body == "invalid user":
         print("This user does not exist, please try again")
+        temp_server_connection.close()
         return None, None
 
     # other users public key, used for decrypting messages in end to end encryption
     dest_public_key = load_pem_public_key(messages[0].body.encode(), default_backend())
+    temp_server_connection.close()
     return dest, dest_public_key

@@ -37,6 +37,8 @@ class ChatSession:
                 # XXX use binary instead of json with base64
                 b = b64decode(i.body)
                 i.body = PeerMessage.from_encrypted_bytes(b, self.peer_ec_key, self.aes_key)
+                if i.body is not None and i.body.message == "$NULL$":
+                    i.body = None
             if i.body is not None:
                 messages.append(i)
 
