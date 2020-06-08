@@ -46,7 +46,7 @@ class ConnectionThread(Thread):
         # [TEMP] Fix for deleting incoming queue so that messages don't loop through network
         del self.incoming_queue[self.srcstr]
         try:
-            print("cT attempting to get messages for",self.username) # Debug 'This prints which username we are trying to get messages for'
+            #print("cT attempting to get messages for",self.username) # Debug 'This prints which username we are trying to get messages for'
             messages = self.outgoing_queue[self.username].body
             print("cT: Attempting to send messages") # Debug
             print("cT: Message queue contents (len: " + str(len(messages)) +")") # Debug 'This prints the num of messages stored'
@@ -55,9 +55,9 @@ class ConnectionThread(Thread):
             for i in messages:
                 print("{Source: " + str(i.src) + " | Dest: " + str(i.dest) + " | Msg: " + str(i.body) + "}")
             # Debug End_Block
-            print("Outgoing queue before delete",self.outgoing_queue) # Debug 'Shows contents of outgoing_queue before deletion'
+            #print("Outgoing queue before delete",self.outgoing_queue) # Debug 'Shows contents of outgoing_queue before deletion'
             del self.outgoing_queue[self.username]
-            print("Outgoing queue after delete",self.outgoing_queue) # Debug 'Shows contents of outgoing_queue after deletion'
+            #print("Outgoing queue after delete",self.outgoing_queue) # Debug 'Shows contents of outgoing_queue after deletion'
             self.send_messages(messages)
         except KeyError:
             return []
@@ -87,49 +87,47 @@ class ConnectionThread(Thread):
                 print("[Server] Client " + self.hpstring + " has disconnected!", flush=True)
                 return
             data_str = str(data)
-            #print ("[Server] Received data from " + self.hpstring + ": " + data_str)
+            #print ("[Server] Received data from " + self.hpstring + ": " + data_str) # Debug 'Prints where data was recieved from'
             # Decode data
             message = Message.from_json(data_str)
             self.username = message.src
-            #print("[Server] Data sent to " + self.hpstring + " : " + str(data_send))
             
             # Store messages
-            if message.dest != None: #[TEMP] Note if you want mix net to recieve empty messages then just write (if True:)
-                if message.dest == "register":
-                    temp_client_info.append(message.body)
-                    if len(temp_client_info) == 4:
-                        #username is key, value is (public key, password, private key)
-                        # TODO check if username taken already
-                        client_info[temp_client_info[0]] = (temp_client_info[1], temp_client_info[2], temp_client_info[3])
-                        del temp_client_info[:]
-                elif message.dest == "login":
-                    client = client_info[message.src]
-                    password = client[1]
-                    # validate user entered password
-                    ret_body = "valid" if message.body == password else "invalid"
-                    ret_src = "server"
-                    ret_dest = message.src
+            if message.dest == "register":
+                temp_client_info.append(message.body)
+                if len(temp_client_info) == 4:
+                    #username is key, value is (public key, password, private key)
+                    # TODO check if username taken already
+                    client_info[temp_client_info[0]] = (temp_client_info[1], temp_client_info[2], temp_client_info[3])
+                    del temp_client_info[:]
+            elif message.dest == "login":
+                client = client_info[message.src]
+                password = client[1]
+                # validate user entered password
+                ret_body = "valid" if message.body == password else "invalid"
+                ret_src = "server"
+                ret_dest = message.src
 
-                    ret_message = Message(ret_src, ret_dest, ret_body)
-                    self.send_messages([ret_message])
+                ret_message = Message(ret_src, ret_dest, ret_body)
+                self.send_messages([ret_message])
 
-                    #if valid password, send user info as well
-                    if ret_body == "valid":
-                        pub_key_message = Message(ret_src, ret_dest, client[0])
-                        #self.send_messages(pub_key_message)
+                #if valid password, send user info as well
+                if ret_body == "valid":
+                    pub_key_message = Message(ret_src, ret_dest, client[0])
+                    #self.send_messages(pub_key_message)
 
-                        priv_key_message = Message(ret_src, ret_dest, client[2])
-                        #self.send_messages(priv_key_message)
+                    priv_key_message = Message(ret_src, ret_dest, client[2])
+                    #self.send_messages(priv_key_message)
 
-                        messages = [pub_key_message, priv_key_message]
-                        self.send_messages(messages)
-                    else:
-                        self.send_messages([ret_message])
-                elif message.dest == "validate":
-                    ret_body = client_info[message.body][0] if message.body in client_info else "invalid user"
-                    ret_src = "server"
-                    ret_dest = message.src
-                    ret_message = Message(ret_src, ret_dest, ret_body)
-                    self.send_messages([ret_message])
+                    messages = [pub_key_message, priv_key_message]
+                    self.send_messages(messages)
                 else:
-                    self.store_message(message)
+                    self.send_messages([ret_message])
+            elif message.dest == "validate":
+                ret_body = client_info[message.body][0] if message.body in client_info else "invalid user"
+                ret_src = "server"
+                ret_dest = message.src
+                ret_message = Message(ret_src, ret_dest, ret_body)
+                self.send_messages([ret_message])
+            else:
+                self.store_message(message)
