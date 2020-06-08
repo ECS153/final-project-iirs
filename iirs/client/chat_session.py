@@ -20,7 +20,8 @@ class ChatSession:
 
     def send_message(self, body):
         if self.aes_key is not None:
-            peer_message = PeerMessage(body)
+            deaddrop = 0
+            peer_message = PeerMessage(body, deaddrop)
             encrypted = peer_message.to_encrypted_bytes(self.ec_key, self.aes_key)
             body = b64encode(encrypted).decode()
 

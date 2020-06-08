@@ -27,8 +27,9 @@ def datetime_to_ms(dt):
 
 
 class PeerMessage:
-    def __init__(self, message, send_time=None):
+    def __init__(self, message, deaddrop, send_time=None):
         self.message = message
+        self.deaddrop = deaddrop
         self.send_time = send_time or datetime.datetime.now()
 
     @classmethod
@@ -51,11 +52,13 @@ class PeerMessage:
         message = b[80:80+message_length]
         message = message.decode()
 
-        return PeerMessage(message, send_time)
+        deaddrop = struct.unpack('<i', b[80+160:80+160+4])[0]
+
+        return PeerMessage(message, deaddrop, send_time)
 
     @classmethod
     def from_encrypted_bytes(cls, b, peer_ec_key, aes_key):
-        assert len(b) == 256
+        assert len(b) == 256 + 16
 
         iv = b[:16]
         decryptor = Cipher(aes_key, CBC(iv), default_backend()).decryptor()
@@ -75,7 +78,10 @@ class PeerMessage:
 
         message = self.message.encode().ljust(160, b'\0')
 
-        b = send_time + message_length + message
+        deaddrop = struct.pack('<i', self.deaddrop)
+        deaddrop += b'\0' * 12 # padding
+
+        b = send_time + message_length + message + deaddrop
 
         signature = ec_key.sign(b, ec.ECDSA(hashes.SHA256())).ljust(72, b'\0')
 
