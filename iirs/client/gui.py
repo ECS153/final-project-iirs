@@ -37,7 +37,8 @@ class SendWidget(ttk.Frame):
         self.send_entry.pack(side="left", fill="x", expand=True)
 
         self.send_button = ttk.Button(self)
-        self.send_button["text"] = "Send"
+        self.send_button["text"] = "Connecting..."
+        self.send_button["state"] = "disabled"  # Disable button until we can talk to other user
         self.send_button["command"] = self.handle_send_evt
         self.send_button.pack(side="right")
 
@@ -57,6 +58,7 @@ class ChatWindow(tk.Tk):
         super().__init__()
 
         self.chat_session = chat_session
+        self.started_convo = False
 
         self.wm_title("Chat")
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -75,8 +77,14 @@ class ChatWindow(tk.Tk):
     def fetch_messages(self):
         self.after(1, self.fetch_messages)
 
+        # Todo: Maybe add a check here that makes the button do nothing until we have setup connection
         # Check if any messages have been recieved
         messages = self.chat_session.recv_messages()
+        if len(messages) > 0 and not self.started_convo:
+            self.started_convo = True
+            self.send_frame.send_button["state"] = "Normal"
+            self.send_frame.send_button["text"] = "Send"
+
         for message in messages:
             peer_message = message.body
             self.recv_message(message.src, peer_message.message)
