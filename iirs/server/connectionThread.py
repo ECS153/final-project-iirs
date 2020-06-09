@@ -43,7 +43,7 @@ class ConnectionThread(Thread):
         print("[Server] Client connected at", self.hpstring)
 
     def get_messages(self):
-        # [TEMP] Fix for deleting incoming queue so that messages don't loop through network
+        # Delete incoming queue so that messages don't loop through network
         del self.incoming_queue[self.srcstr]
         try:
             #print("cT attempting to get messages for",self.username) # Debug 'This prints which username we are trying to get messages for'
@@ -71,7 +71,7 @@ class ConnectionThread(Thread):
 
     def store_message(self, message):
         src = message.src
-        # [TEMP] Part of incoming queue deletion on line 46.
+        # Part of incoming queue deletion on line 46.
         if self.srcstr == "":
             self.srcstr = src
 
