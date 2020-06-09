@@ -77,7 +77,6 @@ class ChatWindow(tk.Tk):
     def fetch_messages(self):
         self.after(2, self.fetch_messages)
 
-        # Todo: Maybe add a check here that makes the button do nothing until we have setup connection
         # Check if any messages have been recieved
         messages = self.chat_session.recv_messages()
         if len(messages) > 0 and not self.started_convo:

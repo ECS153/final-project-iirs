@@ -29,10 +29,8 @@ class DeadDropSync:
         self.conn_status = False
         self.first_message_time = maxsize
         self.sched = BackgroundScheduler()
-        self.sending_to = 0
         self.last_success = 0
         self.attempts = 0
-        self.queue = queue.Queue()
 
     # Updates the deaddrops for a listener client
     def listener_update(self, currentDD, nextDD):
