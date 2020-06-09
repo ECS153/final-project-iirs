@@ -1,4 +1,5 @@
-# final-project-iirs
+# final-project-iirs (Secure Chat Client)  
+**Note:** For final project video and slides, view the bottom of milestones.md.
 ## File Structure
 - Setup.py: Provides necessary info / modules to run the project
 - Server.py: Runs the server backend
@@ -7,7 +8,7 @@
   - Message.py: Has message classes
   - Server:  
     - connectionThread.py: Class for each connection, connected to the server, one per user
-    - Deaddrop.py: The dead drop system. Contains the invid
+    - Deaddrop.py: The dead drop system. Contains the manager, deaddrop container, etc. Handles all storage/retrieval.
     - Main.py: Sets up the server to run the mix net and dead drop system together
     - Mix_net.py: Contains the mix net
   - Client:  
