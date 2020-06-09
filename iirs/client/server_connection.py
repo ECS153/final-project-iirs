@@ -82,9 +82,20 @@ class SendThread(threading.Thread):
             terminated = self.terminated
 
             try:
-                message = self.queue.get_nowait()
-                encoded = message.to_json().encode('utf-8') + b'\n'
-                self.connection.sock.sendall(encoded)
+                if self.aes_key is not None:
+                    msg = self.queue.get_nowait()
+                    body = msg.body
+                    deaddrop = self.dd_sync.nextDD 
+                    peer_message = PeerMessage(body, deaddrop)
+                    encrypted = peer_message.to_encrypted_bytes(self.ec_key, self.aes_key)
+                    body = b64encode(encrypted).decode()
+                    message = Message(self.connection.username, str(self.dd_sync.currentDD), body)
+                    encoded = message.to_json().encode('utf-8') + b'\n'
+                    self.connection.sock.sendall(encoded)
+                else:
+                    message = self.queue.get_nowait()
+                    encoded = message.to_json().encode('utf-8') + b'\n'
+                    self.connection.sock.sendall(encoded)
             except queue.Empty:
                 if terminated:
                     return

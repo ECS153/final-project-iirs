@@ -75,7 +75,7 @@ class ChatWindow(tk.Tk):
         self.send_frame.pack(side="bottom", fill="x")
 
     def fetch_messages(self):
-        self.after(1, self.fetch_messages)
+        self.after(2, self.fetch_messages)
 
         # Todo: Maybe add a check here that makes the button do nothing until we have setup connection
         # Check if any messages have been recieved

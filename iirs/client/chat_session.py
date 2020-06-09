@@ -16,20 +16,15 @@ class ChatSession:
         self.peer_ec_key = peer_ec_key
         self.dd_sync = dd_sync
         self.listener = False
+        self.generator = False
         if ec_key is None or peer_ec_key is None:
             self.aes_key = None
         else:
             self.aes_key = AES(ec_key.exchange(ec.ECDH(), peer_ec_key))
 
     def send_message(self, body):
-        if self.aes_key is not None:
-            deaddrop = self.dd_sync.nextDD 
-            peer_message = PeerMessage(body, deaddrop)
-            encrypted = peer_message.to_encrypted_bytes(self.ec_key, self.aes_key)
-            body = b64encode(encrypted).decode()
-            message = Message(self.name, str(self.dd_sync.currentDD), body)
-        else:
-            message = Message(self.name, self.peer_name, body)
+        
+        message = Message(self.name, self.peer_name, body)
         return self.server_connection.send(message)
 
     def recv_messages(self):
@@ -48,11 +43,10 @@ class ChatSession:
                         i.body.message = "Connection established successfully"
                         print("Comparing dt: " + str(dest_time) + " with st: " + str(source_time))
                         if source_time < dest_time: # We are the generator
-                            self.dd_sync.generator_set()
+                            self.generator = True
                             print("[CLIENT] We are the generator!")
                             print("[CLIENT] Next deaddrop will be:", str(self.dd_sync.currentDD))
                         elif dest_time < source_time: # We are the listener
-                            self.dd_sync.listener_update(i.body.deaddrop,0)
                             self.listener = True
                             print("[CLIENT] We are the listener!")
                             print("[CLIENT] Next deaddrop will be:", str(self.dd_sync.currentDD))
@@ -61,10 +55,15 @@ class ChatSession:
                             self.dd_sync.regen()
                             i.body = None
                             break
-                    # If listener, and we recieved a message, we need to update next DD
+                    # Update next DD information
+                    self.dd_sync.last_success = self.dd_sync.currentDD # Stores which DD last successful comm was at
                     if self.listener:
                         print("Updating the deaddrop from " + str(self.dd_sync.currentDD) + " to " + str(i.body.deaddrop))
                         self.dd_sync.listener_update(i.body.deaddrop,0)
+                    elif self.generator:
+                        self.dd_sync.last_success = self.dd_sync.currentDD
+                        self.dd_sync.generate()
+                        print("Generating new future deaddrop " + str(self.dd_sync.nextDD))
                     if i.body.message == "$NULL$":
                         i.body = None
 

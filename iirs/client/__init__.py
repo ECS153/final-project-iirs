@@ -1,6 +1,6 @@
 import socket
 from getpass import getpass
-import hashlib
+import hashlib, queue
 
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.backends import default_backend
@@ -29,6 +29,10 @@ class DeadDropSync:
         self.conn_status = False
         self.first_message_time = maxsize
         self.sched = BackgroundScheduler()
+        self.sending_to = 0
+        self.last_success = 0
+        self.attempts = 0
+        self.queue = queue.Queue()
 
     # Updates the deaddrops for a listener client
     def listener_update(self, currentDD, nextDD):
@@ -38,17 +42,11 @@ class DeadDropSync:
         self.nextDD = nextDD
     
     # Generates a new next deaddrop 
-    def __generate(self):
-        self.currentDD = self.nextDD
-        self.nextDD = randint(1,NUM_DEADDROP)
-    
-    # Starts the deaddrop generator for the generator client
-    def generator_set(self):
-        self.__generate()
+    def generate(self):
         if not self.conn_status:
             self.conn_status = True
-        self.sched.add_job(self.__generate, 'cron', second='*/2')
-        self.sched.start()
+        self.currentDD = self.nextDD
+        self.nextDD = randint(1,NUM_DEADDROP)
     
     # Regenerates the next dead drop
     def regen(self):
