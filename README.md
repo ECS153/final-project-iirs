@@ -13,10 +13,10 @@
     - Mix_net.py: Contains the mix net
   - Client:  
     - \_\_init\_\_.py: Contains necessary functions for login, registration, user validation. Also holds DeadDropSync class.
-    - Chat_session.py: IDK
     - Gui.py: Contains the gui
-    - Main.py: IDK
-    - Server_connection.py: IDK
+    - Main.py: Main function, which creates a connection, invokes the login method and starts the GUI
+    - Server_connection.py: Provides `ServerConnection`, which creates a socket to the server, and spawns threads to send and  recieve
+    - Chat_session.py: `ChatSession` wraps `ServerConnection`, with the information about the user who the chat session is with. The caller then can deal with simple plain text message, unencrypted.
 
 ## Concept Mapping
 ### Client
