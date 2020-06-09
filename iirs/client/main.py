@@ -14,8 +14,9 @@ def main():
         dest, dest_public_key = valid_user(username)
         if dest:
             print(private_key, dest_public_key)
-            server_connection = ServerConnection(HOST, PORT, username, private_key, dest_public_key)
-            session = ChatSession(server_connection, username, private_key, dest, dest_public_key)
+            dd_sync = DeadDropSync() # Allows access to deaddrop info across modules
+            server_connection = ServerConnection(HOST, PORT, username, private_key, dest_public_key, dd_sync)
+            session = ChatSession(server_connection, username, private_key, dest, dest_public_key, dd_sync)
             window = ChatWindow(session)
             window.mainloop()
             return

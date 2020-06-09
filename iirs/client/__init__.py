@@ -1,6 +1,6 @@
 import socket
 from getpass import getpass
-import hashlib
+import hashlib, queue
 
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.backends import default_backend
@@ -9,9 +9,48 @@ from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat
 from .server_connection import ServerConnection
 from .chat_session import ChatSession
 
+from sys import maxsize
+from random import seed,randint
+from time import time
+from apscheduler.schedulers.background import BackgroundScheduler
+
 
 HOST = socket.gethostname()  # For testing we will use same machine
 PORT = 12345  # Arbitrary port for connecting
+
+# Temp variable for now
+NUM_DEADDROP = 100
+
+class DeadDropSync:
+    def __init__(self):
+        seed(time())
+        self.currentDD = 0
+        self.nextDD = randint(1,NUM_DEADDROP)
+        self.conn_status = False
+        self.first_message_time = maxsize
+        self.sched = BackgroundScheduler()
+        self.sending_to = 0
+        self.last_success = 0
+        self.attempts = 0
+        self.queue = queue.Queue()
+
+    # Updates the deaddrops for a listener client
+    def listener_update(self, currentDD, nextDD):
+        if not self.conn_status:
+            self.conn_status = True
+        self.currentDD = currentDD
+        self.nextDD = nextDD
+    
+    # Generates a new next deaddrop 
+    def generate(self):
+        if not self.conn_status:
+            self.conn_status = True
+        self.currentDD = self.nextDD
+        self.nextDD = randint(1,NUM_DEADDROP)
+    
+    # Regenerates the next dead drop
+    def regen(self):
+        self.nextDD = randint(1,NUM_DEADDROP)
 
 def register_or_login():
     private_key = None

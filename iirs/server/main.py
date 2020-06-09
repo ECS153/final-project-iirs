@@ -4,7 +4,7 @@ from .mix_network import MixNetwork
 from .deaddrop import *
 
 def main():
-    dead_drop = DeaddropManager(1)
+    dead_drop = DeaddropManager(100)
     mix_net = MixNetwork(dead_drop)
     while True:
         print("in while true loop")

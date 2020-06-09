@@ -38,7 +38,7 @@ class MixNetwork:
 
         sched = BackgroundScheduler()
         # job is a cron style job, running every second
-        sched.add_job(self.mix_and_pass, 'cron', second='*')
+        sched.add_job(self.mix_and_pass, 'cron', second='*/2')
         sched.start()
 
         print("[Server] Server started at " + str(self.HOST) + ":" + str(self.PORT))
@@ -85,8 +85,8 @@ class MixNetwork:
             #src_arr[index] = key
             # should only be one message each round
             old_message = self.incoming_message_queue[key][0]
-            #new_message = Message(None, old_message.dest, old_message.body)
-            new_message = Message(None, '1', old_message.body) # this is temporary
+            new_message = Message(None, old_message.dest, old_message.body)
+            #new_message = Message(None, '1', old_message.body) # this is temporary
             shuffled_messages.append(new_message)
 
         # Fisher–Yates shuffle
