@@ -47,7 +47,9 @@ The mix net is the first point of contact with the outside world. It is the mix 
 The dead drop system is initialized upon server creation. The main class, within `deaddrop.py`, is the `DeadDropManager` class. It will create all the specifified deaddrops, handle all transfering of data using private methods `__get()` and `__store()`, and will make sure to clear all data from each deaddrop after every round. The `DeadDrop` class is what actually holds and manages the data given to it. Data is stored using a python list internally. The `DeaddropMessage` class is what wraps the standard `Message` class for the purposes of garbage collection. An optional `GarbageCollector(Thread)` is implemented to allow the clearing of dead drops using time instead of rounds.  
 A typical flow with the dead drop system is that the mixnet will call `handle_messages()` from the manager, which is a `List[Message]`, and the dead drop system will store each message in a specific dead drop, populate same index positions with their respective dead drop contents, and then send it back to the mixnet.
 ## Install Instructions  
-Description
+The program can be installed with `python3 setup.py install` and run `iirs-server` and `iirs-client`.
+
+Alternately, it can be run without installation. First install the dependencies, with a command like `pip3 install --user cryptography apscheduler`. Then it can be run as `./server.py` and `./client.py`.
 
 ## Usage Instructions 
 For the server side, all you need to do is run it on your local machine. Nothing else needs to be done.  
