@@ -12,7 +12,6 @@ from .chat_session import ChatSession
 from sys import maxsize
 from random import seed,randint
 from time import time
-from apscheduler.schedulers.background import BackgroundScheduler
 
 
 HOST = socket.gethostname()  # For testing we will use same machine
@@ -28,7 +27,6 @@ class DeadDropSync:
         self.nextDD = randint(1,NUM_DEADDROP)
         self.conn_status = False
         self.first_message_time = maxsize
-        self.sched = BackgroundScheduler()
         self.last_success = 0
         self.attempts = 0
 
